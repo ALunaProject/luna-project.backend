@@ -2,6 +2,7 @@ package com.luna.lunaproject.dto;
 
 public class PostResponseDTO {
 
+
     private String tittle;
     private String content;
 

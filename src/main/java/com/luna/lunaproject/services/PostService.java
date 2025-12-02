@@ -20,11 +20,11 @@ public class PostService {
     }
 
 //    exibir post - get
-    public List<PostResponseDTO> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        List<PostResponseDTO> responseDTOs = posts.stream().map(PostResponseDTO::new).toList();
-        return responseDTOs;
-    }
+//    public List<PostResponseDTO> getAllPosts() {
+//        List<Post> posts = postRepository.findAll();
+//        List<PostResponseDTO> responseDTOs = posts.stream().map().toList();
+//        return responseDTOs;
+//    }
 
 //    criar post - post
     public ResponseEntity<?> savePost(PostRequestDTO postRequestDTO) {
@@ -34,12 +34,21 @@ public class PostService {
     }
 
 //    editar post - put
-    public ResponseEntity<?> editarPost(int id, PostRequestDTO postRequestDTO) {
-
+    public ResponseEntity<?> editPost(int id, PostRequestDTO postRequestDTO) {
+        Post post = postRepository.findById(id).get();
+        post.setTitle(postRequestDTO.getTitle());
+        post.setContent(postRequestDTO.getContent());
+        postRepository.save(post);
+        return ResponseEntity.ok("Post edited successfully");
     }
 
 //    apagar post - delete
     public ResponseEntity<?> deletePost(int id) {
-
+        if (postRepository.existsById(id)) {
+            postRepository.deleteById(id);
+            return ResponseEntity.ok("Post deleted successfully");
+        }else  {
+            return ResponseEntity.ok("Post not found");
+        }
     }
 }
