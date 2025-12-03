@@ -3,6 +3,8 @@ package com.luna.lunaproject.dto;
 import com.luna.lunaproject.entity.Post;
 import jakarta.validation.constraints.*;
 
+import java.time.LocalDate;
+
 public class PostRequestDTO {
 
     @NotBlank
@@ -10,12 +12,21 @@ public class PostRequestDTO {
     private String title;
     @Size(max = 500)
     private String content;
+    private LocalDate creationDate;
 
     public PostRequestDTO() {
     }
+
+    public PostRequestDTO(String title, String content, LocalDate creationDate) {
+        this.title = title;
+        this.content = content;
+        this.creationDate = LocalDate.now();
+    }
+
     public PostRequestDTO(Post post) {
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.creationDate = LocalDate.now();
     }
 
     public String getTitle() {
@@ -32,6 +43,14 @@ public class PostRequestDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override

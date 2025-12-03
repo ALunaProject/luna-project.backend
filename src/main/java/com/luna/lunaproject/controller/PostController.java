@@ -1,11 +1,14 @@
 package com.luna.lunaproject.controller;
 
+import com.luna.lunaproject.dto.PostRequestDTO;
+import com.luna.lunaproject.dto.PostResponseDTO;
 import com.luna.lunaproject.entity.Post;
 import com.luna.lunaproject.repository.PostRepository;
+import com.luna.lunaproject.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -13,11 +16,34 @@ import java.util.List;
 @RequestMapping("/api/test")
 public class PostController {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostService postService;
 
-    @GetMapping
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
+    @GetMapping("/exibir")
+    public List<PostResponseDTO>  getPosts() {
+        return postService.getAllPosts();
+    }
+
+    @GetMapping("/exibir/{id}")
+    public List<PostResponseDTO> getPosts(@PathVariable int id) {
+        return postService.getPostById(id);
+    }
+
+    @PostMapping("/postar")
+    public ResponseEntity<?> criarPost(@RequestBody PostRequestDTO postRequestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.savePost(postRequestDTO));
+    }
+
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<?> editarPost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable int id) {
+        return ResponseEntity.ok(postService.editPost(id, postRequestDTO));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable int id) {
+        return ResponseEntity.ok(postService.deletePost(id));
     }
 }

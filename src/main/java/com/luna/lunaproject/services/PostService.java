@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class PostService {
@@ -20,11 +23,18 @@ public class PostService {
     }
 
 //    exibir post - get
-//    public List<PostResponseDTO> getAllPosts() {
-//        List<Post> posts = postRepository.findAll();
-//        List<PostResponseDTO> responseDTOs = posts.stream().map().toList();
-//        return responseDTOs;
-//    }
+    public List<PostResponseDTO> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+        List<PostResponseDTO> responseDTOs = posts.stream().map(PostResponseDTO::new).collect(toList());
+        return responseDTOs;
+    }
+
+//    exibir post por id - get
+    public List<PostResponseDTO> getPostById(int id) {
+        Optional<Post> post = postRepository.findById(id);
+        List<PostResponseDTO> responseDTO = post.stream().map(PostResponseDTO::new).toList();
+        return responseDTO;
+    }
 
 //    criar post - post
     public ResponseEntity<?> savePost(PostRequestDTO postRequestDTO) {

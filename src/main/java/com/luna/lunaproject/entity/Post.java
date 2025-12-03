@@ -29,9 +29,16 @@ public class Post {
     public Post() {
     }
 
+    public Post(String title, String content, LocalDate creationDate) {
+        this.title = title;
+        this.content = content;
+        this.creationDate = creationDate;
+    }
+
     public Post(PostRequestDTO postRequestDTO) {
         this.title = postRequestDTO.getTitle();
         this.content = postRequestDTO.getContent();
+        this.creationDate = LocalDate.now();
     }
 
 

@@ -1,21 +1,31 @@
 package com.luna.lunaproject.dto;
 
+import com.luna.lunaproject.entity.Post;
+
+import java.time.LocalDate;
+
 public class PostResponseDTO {
 
-
-    private String tittle;
+    private String title;
     private String content;
+    private LocalDate creationDate;
 
-    public PostResponseDTO(PostRequestDTO postRequestDTO) {
-        this.tittle = postRequestDTO.getTitle();
+
+    public PostResponseDTO(Post postRequestDTO) {
+        this.title = postRequestDTO.getTitle();
         this.content = postRequestDTO.getContent();
+        this.creationDate = postRequestDTO.getCreationDate();
     }
 
     public String getTittle() {
-        return tittle;
+        return title;
     }
 
     public String getContent() {
         return content;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 }
