@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
@@ -22,22 +22,22 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping("/exibir")
+    @GetMapping("/display")
     public List<PostResponseDTO>  getPosts() {
         return postService.getAllPosts();
     }
 
-    @GetMapping("/exibir/{id}")
+    @GetMapping("/display/{id}")
     public List<PostResponseDTO> getPosts(@PathVariable int id) {
         return postService.getPostById(id);
     }
 
-    @PostMapping("/postar")
+    @PostMapping("/post")
     public ResponseEntity<?> criarPost(@RequestBody PostRequestDTO postRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.savePost(postRequestDTO));
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<?> editarPost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable int id) {
         return ResponseEntity.ok(postService.editPost(id, postRequestDTO));
     }
