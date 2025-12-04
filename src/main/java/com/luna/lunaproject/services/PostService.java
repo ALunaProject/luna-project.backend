@@ -37,28 +37,28 @@ public class PostService {
     }
 
 //    criar post - post
-    public ResponseEntity<?> savePost(PostRequestDTO postRequestDTO) {
+    public String savePost(PostRequestDTO postRequestDTO) {
         Post post = new Post(postRequestDTO);
         postRepository.save(post);
-        return ResponseEntity.ok("Post saved successfully");
+        return "Post saved successfully";
     }
 
 //    editar post - put
-    public ResponseEntity<?> editPost(int id, PostRequestDTO postRequestDTO) {
+    public String editPost(int id, PostRequestDTO postRequestDTO) {
         Post post = postRepository.findById(id).get();
         post.setTitle(postRequestDTO.getTitle());
         post.setContent(postRequestDTO.getContent());
         postRepository.save(post);
-        return ResponseEntity.ok("Post edited successfully");
+        return "Post edited successfully";
     }
 
 //    apagar post - delete
-    public ResponseEntity<?> deletePost(int id) {
+    public String deletePost(int id) {
         if (postRepository.existsById(id)) {
             postRepository.deleteById(id);
-            return ResponseEntity.ok("Post deleted successfully");
+            return "Post deleted successfully";
         }else  {
-            return ResponseEntity.ok("Post not found");
+            return "Post not found";
         }
     }
 }
