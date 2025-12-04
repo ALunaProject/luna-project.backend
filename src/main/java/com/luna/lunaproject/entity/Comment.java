@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "comment")
-public class Comments {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "comment_id")
@@ -21,17 +21,17 @@ public class Comments {
     @Column(name = "post_id", nullable = false)
     private int postId;
 
-    public Comments() {
+    public Comment() {
     }
 
     //    alterar depois para requestDTO quando criar od DTO dessa entidade
-    public Comments(CommentsReqDTO req) {
+    public Comment(CommentsReqDTO req) {
         this.content = req.getContent();
         this.creationDate = req.getCreationDate();
 
     }
 
-    public Comments(int commentId, String content, int userId, int postId) {
+    public Comment(int commentId, String content, int userId, int postId) {
         this.commentId = commentId;
         this.content = content;
         this.creationDate = LocalDate.now();

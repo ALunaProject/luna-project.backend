@@ -1,7 +1,6 @@
 package com.luna.lunaproject.dto;
 
-import com.luna.lunaproject.entity.Comments;
-import org.springframework.stereotype.Service;
+import com.luna.lunaproject.entity.Comment;
 
 import java.time.LocalDate;
 
@@ -15,7 +14,7 @@ public class CommentsResDTO {
         this.creationDate = req.getCreationDate();
     }
 
-    public CommentsResDTO(Comments comments) {
+    public CommentsResDTO(Comment comment) {
     }
 
     public String getContent() {

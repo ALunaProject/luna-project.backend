@@ -1,10 +1,9 @@
 package com.luna.lunaproject.dto;
 
-import com.luna.lunaproject.entity.Comments;
+import com.luna.lunaproject.entity.Comment;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class CommentsReqDTO {
     @NotBlank
@@ -20,9 +19,9 @@ public class CommentsReqDTO {
         this.creationDate = LocalDate.now();
     }
 
-    public CommentsReqDTO(Comments comments) {
-        this.content = comments.getContent();
-        this.creationDate = comments.getCreationDate();
+    public CommentsReqDTO(Comment comment) {
+        this.content = comment.getContent();
+        this.creationDate = comment.getCreationDate();
     }
 
     public String getContent() {
