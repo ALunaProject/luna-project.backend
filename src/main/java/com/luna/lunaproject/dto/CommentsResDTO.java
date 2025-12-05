@@ -8,13 +8,9 @@ public class CommentsResDTO {
     private String content;
     private LocalDate creationDate;
 
-
-    public CommentsResDTO(CommentsReqDTO req) {
+    public CommentsResDTO(Comment req) {
         this.content = req.getContent();
         this.creationDate = req.getCreationDate();
-    }
-
-    public CommentsResDTO(Comment comment) {
     }
 
     public String getContent() {
