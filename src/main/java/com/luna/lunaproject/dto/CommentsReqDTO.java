@@ -1,29 +1,28 @@
 package com.luna.lunaproject.dto;
 
 import com.luna.lunaproject.entity.Comment;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 
 public class CommentsReqDTO {
-    @NotBlank
-    @Size(max = 255)
+    @Size(max = 500)
     private String content;
     private LocalDate creationDate;
 
+    public CommentsReqDTO() {
+    }
 
-    private CommentsReqDTO() {}
-
-    public CommentsReqDTO(String content) {
+    public CommentsReqDTO(String content, LocalDate creationDate) {
         this.content = content;
         this.creationDate = LocalDate.now();
     }
 
     public CommentsReqDTO(Comment comment) {
         this.content = comment.getContent();
-        this.creationDate = comment.getCreationDate();
+        this.creationDate = LocalDate.now();
     }
-
+    
     public String getContent() {
         return content;
     }
@@ -38,13 +37,5 @@ public class CommentsReqDTO {
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
-    }
-
-    @Override
-    public String toString() {
-        return "CommentsReqDTO{" +
-                "content='" + content + '\'' +
-                ", creationDate=" + creationDate +
-                '}';
     }
 }
