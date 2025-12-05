@@ -1,6 +1,6 @@
 package com.luna.lunaproject.dto;
 
-public class UserCreateDTO {
+public class UserRequestDTO {
 
     private String nickName;
     private String email;

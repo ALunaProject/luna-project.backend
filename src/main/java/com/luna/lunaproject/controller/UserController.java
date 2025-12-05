@@ -1,6 +1,8 @@
 package com.luna.lunaproject.controller;
 
-import com.luna.lunaproject.entity.User;
+import com.luna.lunaproject.dto.LoginRequestDTO;
+import com.luna.lunaproject.dto.UserRequestDTO;
+import com.luna.lunaproject.dto.UserResponseDTO;
 import com.luna.lunaproject.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,26 +20,46 @@ public class UserController {
     private UserService service;
 
     @GetMapping
-    public List<User> listar() {
-        return service.listarTodos();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@RequestBody User usuario) {
+    public ResponseEntity<?> registerUser(@RequestBody UserRequestDTO request) {
         try {
-            User novo = service.criarUsuario(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novo);
+            UserResponseDTO newUser = service.createUser(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO request) {
+        try {
+            UserResponseDTO updatedUser = service.updateUser(id, request);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        try {
+            service.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginData) {
-        User user = service.autenticar(loginData.getEmail(), loginData.getPasswordHash());
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginData) {
+        UserResponseDTO user = service.authenticate(loginData);
         if (user != null) {
             return ResponseEntity.ok(user);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Acesso negado");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied");
     }
 }
