@@ -6,45 +6,56 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "post")
 public class Comment {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "comment_id")
-    private int commentId;
-    @Column(name = "content", nullable = false, length = 255)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
+    private Integer commentId;
+
+    @Column(nullable = false, length = 255)
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
+
     @Column(name = "creation_date", nullable = false)
     private LocalDate creationDate;
-    @Column(name = "user_id", nullable = false)
-    private int userId;
-    @Column(name = "post_id", nullable = false)
-    private int postId;
+
+    @Column(name = "user_id")
+    private Integer userId;
 
     public Comment() {
     }
 
-    //    alterar depois para requestDTO quando criar od DTO dessa entidade
-    public Comment(CommentsReqDTO req) {
-        this.content = req.getContent();
-        this.creationDate = req.getCreationDate();
-
-    }
-
-    public Comment(int commentId, String content, int userId, int postId) {
-        this.commentId = commentId;
+    public Comment(String title, String content, LocalDate creationDate) {
+        this.title = title;
         this.content = content;
-        this.creationDate = LocalDate.now();
-        this.userId = userId;
-        this.postId = postId;
+        this.creationDate = creationDate;
     }
 
-    public int getCommentId() {
+    public Comment(CommentRequestDTO postRequestDTO) {
+        this.title = postRequestDTO.getTitle();
+        this.content = postRequestDTO.getContent();
+        this.creationDate = LocalDate.now();
+    }
+
+
+    public Integer getCommentId() {
         return commentId;
     }
 
-    public void setCommentId(int commentId) {
+    public void setCommentId(Integer commentId) {
         this.commentId = commentId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
@@ -63,19 +74,11 @@ public class Comment {
         this.creationDate = creationDate;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
     }
 }
