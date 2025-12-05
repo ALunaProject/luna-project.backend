@@ -1,6 +1,6 @@
 package com.luna.lunaproject.dto;
 
-public class LoginRequestDTO {
+public class UserLoginRequestDTO {
 
     private String email;
     private String password;

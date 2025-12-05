@@ -1,6 +1,6 @@
 package com.luna.lunaproject.services;
 
-import com.luna.lunaproject.dto.LoginRequestDTO;
+import com.luna.lunaproject.dto.UserLoginRequestDTO;
 import com.luna.lunaproject.dto.UserRequestDTO;
 import com.luna.lunaproject.dto.UserResponseDTO;
 import com.luna.lunaproject.entity.User;
@@ -63,7 +63,7 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    public UserResponseDTO authenticate(LoginRequestDTO loginData) {
+    public UserResponseDTO authenticate(UserLoginRequestDTO loginData) {
         Optional<User> userOpt = repository.findByEmail(loginData.getEmail());
 
         if (userOpt.isPresent()) {

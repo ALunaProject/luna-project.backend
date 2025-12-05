@@ -1,6 +1,6 @@
 package com.luna.lunaproject.controller;
 
-import com.luna.lunaproject.dto.LoginRequestDTO;
+import com.luna.lunaproject.dto.UserLoginRequestDTO;
 import com.luna.lunaproject.dto.UserRequestDTO;
 import com.luna.lunaproject.dto.UserResponseDTO;
 import com.luna.lunaproject.services.UserService;
@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginData) {
+    public ResponseEntity<?> login(@RequestBody UserLoginRequestDTO loginData) {
         UserResponseDTO user = service.authenticate(loginData);
         if (user != null) {
             return ResponseEntity.ok(user);
