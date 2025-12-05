@@ -6,16 +6,13 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "post")
+@Table(name = "comment")
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "comment_id")
     private Integer commentId;
-
-    @Column(nullable = false, length = 255)
-    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -26,18 +23,19 @@ public class Comment {
     @Column(name = "user_id")
     private Integer userId;
 
+    @Column(name = "post_id")
+    private Integer postId;
+
     public Comment() {
     }
 
-    public Comment(String title, String content, LocalDate creationDate) {
-        this.title = title;
+    public Comment(String content, LocalDate creationDate) {
         this.content = content;
         this.creationDate = creationDate;
     }
 
-    public Comment(CommentRequestDTO postRequestDTO) {
-        this.title = postRequestDTO.getTitle();
-        this.content = postRequestDTO.getContent();
+    public Comment(CommentsReqDTO req) {
+        this.content = req.getContent();
         this.creationDate = LocalDate.now();
     }
 
@@ -49,15 +47,7 @@ public class Comment {
     public void setCommentId(Integer commentId) {
         this.commentId = commentId;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    
     public String getContent() {
         return content;
     }
@@ -80,5 +70,12 @@ public class Comment {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+    public Integer getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Integer postId) {
+        this.postId = postId;
     }
 }
