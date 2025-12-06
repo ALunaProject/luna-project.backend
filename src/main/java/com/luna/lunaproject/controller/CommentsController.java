@@ -18,7 +18,7 @@ public class CommentsController {
 
     private final CommentsServices services;
 
-    public PostController(CommentsServices services) {
+    public CommentsController(CommentsServices services) {
         this.services = services;
     }
 
@@ -44,6 +44,6 @@ public class CommentsController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteComments(@PathVariable int id) {
-        return ResponseEntity.ok(services.deletePost(id));
+        return ResponseEntity.ok(services.deleteComments(id));
     }
 }
