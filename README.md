@@ -1,6 +1,7 @@
 # luna-project.backend
 Luna`s backend :)
-´´´
+
+```
 src/
 └── main/
     ├── java/
@@ -84,4 +85,4 @@ src/
         │   └── migration/                    # Scripts Flyway/Liquibase (se usado)
         ├── static/                           # Arquivos estáticos (imagens, etc.)
         └── templates/                        # (opcional) se usar Thymeleaf
-´´´
+```
