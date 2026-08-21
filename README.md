@@ -6,8 +6,8 @@ src/
 └── main/
     ├── java/
     │   └── com/
-    │       └── seuprojeto/
-    │           └── api/                      # Pacote raiz (ex: com.gamematch.api)
+    │       └── luna/
+    │           └── lunaproject/                      # Pacote raiz (ex: com.gamematch.api)
     │               │
     │               ├── GamematchApplication.java   # Classe principal
     │               │
