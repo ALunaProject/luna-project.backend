@@ -19,8 +19,13 @@ public class UserResponseDto {
 
 
     public UserResponseDto(UUID id, String username, String email) {
+        this.id =  id;
+        this.username = username;
+        this.email = email;
     }
 
     public UserResponseDto(UUID id, String username) {
+        this.id = id;
+        this.username = username;
     }
 }
