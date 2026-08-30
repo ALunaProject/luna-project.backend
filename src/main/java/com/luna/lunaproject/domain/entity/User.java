@@ -3,6 +3,7 @@ package com.luna.lunaproject.domain.entity;
 
 import com.luna.lunaproject.domain.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Data
 @Entity(name = "user")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -34,8 +36,16 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities(){
         if (this.role == UserRole.ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        }else {
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 }
