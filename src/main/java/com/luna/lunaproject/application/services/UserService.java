@@ -59,6 +59,7 @@ public class UserService {
         user.setUsername(userUpdateDto.getUsername());
         user.setProfilePicUrl(userUpdateDto.getProfilePicUrl());
         user.setBannerUrl(userUpdateDto.getBannerUrl());
+        user.setBio(userUpdateDto.getBio());
         User updatedUser = userRepository.save(user);
 
         return new UserResponseDto(
