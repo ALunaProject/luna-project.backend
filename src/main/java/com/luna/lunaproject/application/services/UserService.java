@@ -4,7 +4,9 @@ import com.luna.lunaproject.application.dto.UserCreateDto;
 import com.luna.lunaproject.application.dto.UserResponseDto;
 import com.luna.lunaproject.application.dto.UserUpdateDto;
 import com.luna.lunaproject.domain.entity.User;
+import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -22,14 +24,17 @@ public class UserService {
         User user = new User();
         user.setUsername(userCreateDto.getUsername());
         user.setEmail(userCreateDto.getEmail());
-        user.setPassword(userCreateDto.getPassword());
-
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userCreateDto.getPassword());//encriptogata
+        user.setPassword(encryptedPassword);
+        user.setRole(UserRole.USER);
         User savedUser = userRepository.save(user);
 
         return new UserResponseDto(
                 savedUser.getId(),
                 savedUser.getUsername(),
-                savedUser.getEmail()
+                savedUser.getEmail(),
+                savedUser.getRole().getRole()
+
         );
     }
 
@@ -42,7 +47,8 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getProfilePicUrl(),
-                user.getBannerUrl()
+                user.getBannerUrl(),
+                user.getRole().getRole()
         );
     }
 
