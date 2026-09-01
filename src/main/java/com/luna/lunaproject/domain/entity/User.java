@@ -26,6 +26,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String username;
     private String email;
+    private String bio;
     private String password;
     private String profilePicUrl;
     private String bannerUrl;

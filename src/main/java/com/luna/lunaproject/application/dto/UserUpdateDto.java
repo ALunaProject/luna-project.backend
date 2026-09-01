@@ -18,5 +18,5 @@ public class UserUpdateDto {
     private String username;
     private String profilePicUrl;
     private String bannerUrl;
-
+    private String bio;
 }
