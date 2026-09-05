@@ -1,7 +1,7 @@
 package com.luna.lunaproject.interfaces.controller;
 
-import com.luna.lunaproject.application.dto.AuthenticationDTO;
-import com.luna.lunaproject.application.dto.LoginResponseDTO;
+import com.luna.lunaproject.application.dto.auth.AuthenticationDTO;
+import com.luna.lunaproject.application.dto.auth.LoginResponseDTO;
 import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.security.TokenService;
 import org.springframework.web.bind.annotation.RequestBody;

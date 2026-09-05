@@ -1,4 +1,4 @@
-package com.luna.lunaproject.application.dto;
+package com.luna.lunaproject.application.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
