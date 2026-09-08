@@ -1,8 +1,8 @@
 package com.luna.lunaproject.application.services;
 
-import com.luna.lunaproject.application.dto.UserCreateDto;
-import com.luna.lunaproject.application.dto.UserResponseDto;
-import com.luna.lunaproject.application.dto.UserUpdateDto;
+import com.luna.lunaproject.application.dto.user.UserCreateDto;
+import com.luna.lunaproject.application.dto.user.UserResponseDto;
+import com.luna.lunaproject.application.dto.user.UserUpdateDto;
 import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.UserRepository;
