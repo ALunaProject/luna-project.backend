@@ -71,8 +71,10 @@ public class UserService {
     public String deleteUser(UUID userId) {
         if  (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
+            return "Post deleted successfully";
+        }else {
+            return "User not found with id: " + userId;
         }
-        return "User not found with id: " + userId;
     }
 
 }
