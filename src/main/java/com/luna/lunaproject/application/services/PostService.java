@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,6 +44,11 @@ public class PostService {
                 post.getContent(),
                 post.getCreateion_date()
         );
+    }
+
+    public List<PostResponseDto> getAllPosts() {
+        List<Post> post = postRepository.findAll();
+        return post.stream().map(PostResponseDto::new).toList();
     }
 
     public String deletePost(UUID postId) {

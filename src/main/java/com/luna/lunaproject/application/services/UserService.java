@@ -52,6 +52,7 @@ public class UserService {
         );
     }
 
+
     public UserResponseDto updateUser(UUID userId, UserUpdateDto userUpdateDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +29,12 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         PostResponseDto response = postService.getPostById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        List<PostResponseDto> response = postService.getAllPosts();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
