@@ -9,6 +9,7 @@ import com.luna.lunaproject.domain.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,6 +19,11 @@ public class UserService {
 
     public  UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public List<UserResponseDto> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserResponseDto::new).toList();
     }
 
     public UserResponseDto createUser(UserCreateDto userCreateDto) {

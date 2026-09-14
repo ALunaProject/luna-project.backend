@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -31,6 +31,11 @@ public class UserController {
     public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         UserResponseDto response = userService.getUserById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @PutMapping("/{id}")
