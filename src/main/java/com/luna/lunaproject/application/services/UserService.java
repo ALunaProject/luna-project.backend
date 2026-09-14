@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,6 +20,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageUploadService imageUploadService;
+
+    public List<UserResponseDto> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserResponseDto::new).toList();
+    }
 
     public UserResponseDto createUser(UserCreateDto userCreateDto) {
         User user = new User();
@@ -52,6 +58,7 @@ public class UserService {
         );
     }
 
+
     public UserResponseDto updateUser(UUID userId, UserUpdateDto userUpdateDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -71,8 +78,10 @@ public class UserService {
     public String deleteUser(UUID userId) {
         if  (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
+            return "Post deleted successfully";
+        }else {
+            return "User not found with id: " + userId;
         }
-        return "User not found with id: " + userId;
     }
 
     public UserResponseDto updateProfilePicture(UUID userId, MultipartFile file) {
