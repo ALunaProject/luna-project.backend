@@ -6,19 +6,19 @@ import com.luna.lunaproject.application.dto.user.UserUpdateDto;
 import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
-
-    public  UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
+    private final ImageUploadService imageUploadService;
 
     public UserResponseDto createUser(UserCreateDto userCreateDto) {
         User user = new User();
@@ -73,6 +73,28 @@ public class UserService {
             userRepository.deleteById(userId);
         }
         return "User not found with id: " + userId;
+    }
+
+    public UserResponseDto updateProfilePicture(UUID userId, MultipartFile file) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        String imageUrl = imageUploadService.uploadImage(file); //transforma a img em url
+        user.setProfilePicUrl(imageUrl);
+        User updatedUser = userRepository.save(user);
+
+        return new UserResponseDto(updatedUser.getId(), updatedUser.getUsername());
+    }
+
+    public UserResponseDto updateBanner(UUID userId, MultipartFile file) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        String imageUrl = imageUploadService.uploadImage(file); //transforma a img em url
+        user.setBannerUrl(imageUrl);
+        User updatedUser = userRepository.save(user);
+
+        return new UserResponseDto(updatedUser.getId(), updatedUser.getUsername());
     }
 
 }
