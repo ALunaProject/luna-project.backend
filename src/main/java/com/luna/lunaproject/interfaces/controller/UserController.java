@@ -35,7 +35,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("{id}/banner")
+    @PostMapping("/{id}/banner")
     public ResponseEntity<Object> uploadBanner(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         UserResponseDto response = userService.updateBanner(id, file);
         return new ResponseEntity<>(response, HttpStatus.OK);

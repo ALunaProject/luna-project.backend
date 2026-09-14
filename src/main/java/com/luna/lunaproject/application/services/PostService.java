@@ -56,9 +56,7 @@ public class PostService {
             postRepository.deleteById(postId);
             return "Post deleted successfully";
         }else {
-        return "User not found with id: " + postId;
+        return "Post not found with id: " + postId;
         }
     }
-
-
 }
