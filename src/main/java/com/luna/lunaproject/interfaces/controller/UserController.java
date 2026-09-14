@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -33,6 +33,11 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable UUID id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
         UserResponseDto response = userService.updateUser(id, userUpdateDto);
@@ -40,9 +45,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUserById(@PathVariable UUID id) {
-        userService.deleteUser(id);
-        return "User has been deleted";
+    public ResponseEntity<?> deletePostById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.deleteUser(id));
     }
 
 }
