@@ -6,20 +6,21 @@ import com.luna.lunaproject.application.dto.user.UserUpdateDto;
 import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
-
-    public  UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
+    private final ImageUploadService imageUploadService;
 
     public List<UserResponseDto> findAll() {
         List<User> users = userRepository.findAll();
@@ -58,8 +59,9 @@ public class UserService {
         );
     }
 
-
     public UserResponseDto updateUser(UUID userId, UserUpdateDto userUpdateDto) {
+        validateOwnership(userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -76,12 +78,50 @@ public class UserService {
     }
 
     public String deleteUser(UUID userId) {
+        validateOwnership(userId);
+
         if  (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
-            return "Post deleted successfully";
+            return "User deleted successfully";
         }else {
             return "User not found with id: " + userId;
         }
     }
 
+    public UserResponseDto updateProfilePicture(UUID userId, MultipartFile file) {
+        validateOwnership(userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        String imageUrl = imageUploadService.uploadImage(file); //transforma a img em url
+        user.setProfilePicUrl(imageUrl);
+        User updatedUser = userRepository.save(user);
+
+        return new UserResponseDto(updatedUser.getId(), updatedUser.getUsername());
+    }
+
+    public UserResponseDto updateBanner(UUID userId, MultipartFile file) {
+        validateOwnership(userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        String imageUrl = imageUploadService.uploadImage(file); //transforma a img em url
+        user.setBannerUrl(imageUrl);
+        User updatedUser = userRepository.save(user);
+
+        return new UserResponseDto(updatedUser.getId(), updatedUser.getUsername());
+    }
+
+    private void validateOwnership(UUID userId) {
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isOwner = authenticatedUser.getId().equals(userId);
+        boolean isAdmin = authenticatedUser.getRole() == UserRole.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new ForbiddenOperationException("Você não tem permissão para alterar este usuário");
+        }
+    }
 }

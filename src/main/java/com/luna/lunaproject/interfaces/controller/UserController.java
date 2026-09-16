@@ -5,21 +5,21 @@ import com.luna.lunaproject.application.dto.user.UserResponseDto;
 import com.luna.lunaproject.application.dto.user.UserUpdateDto;
 import com.luna.lunaproject.application.services.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
@@ -27,15 +27,22 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PostMapping("/{id}/profile-picture")
+    public ResponseEntity<Object> uploadProfilePicture(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+        UserResponseDto response = userService.updateProfilePicture(id, file);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/banner")
+    public ResponseEntity<Object> uploadBanner(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+        UserResponseDto response = userService.updateBanner(id, file);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         UserResponseDto response = userService.getUserById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> getAllUsers() {
-        return ResponseEntity.ok(userService.findAll());
     }
 
     @PutMapping("/{id}")
@@ -45,8 +52,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePostById(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.deleteUser(id));
+    public String deleteUserById(@PathVariable UUID id) {
+        userService.deleteUser(id);
+        return "User has been deleted";
     }
 
 }

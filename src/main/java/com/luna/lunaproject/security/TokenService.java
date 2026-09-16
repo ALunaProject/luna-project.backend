@@ -19,7 +19,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("luna-project-api")
-                    .withSubject(user.getUsername())
+                    .withSubject(user.getId().toString())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("erro ao gerar token", exception);
