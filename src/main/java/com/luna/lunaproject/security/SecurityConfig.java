@@ -41,11 +41,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/users").permitAll() //mudar pra has role admin dps
                 .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/post/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/post/**").authenticated()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
                 .anyRequest().authenticated()
                 )
 
