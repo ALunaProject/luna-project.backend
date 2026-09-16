@@ -3,7 +3,6 @@ package com.luna.lunaproject.interfaces.controller;
 import com.luna.lunaproject.application.dto.user.UserCreateDto;
 import com.luna.lunaproject.application.dto.user.UserResponseDto;
 import com.luna.lunaproject.application.dto.user.UserUpdateDto;
-import com.luna.lunaproject.application.services.ImageUploadService;
 import com.luna.lunaproject.application.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-    private final ImageUploadService imageUploadService;
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
