@@ -7,6 +7,7 @@ import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,8 +59,9 @@ public class UserService {
         );
     }
 
-
     public UserResponseDto updateUser(UUID userId, UserUpdateDto userUpdateDto) {
+        validateOwnership(userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -76,6 +78,8 @@ public class UserService {
     }
 
     public String deleteUser(UUID userId) {
+        validateOwnership(userId);
+
         if  (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
             return "User deleted successfully";
@@ -85,6 +89,8 @@ public class UserService {
     }
 
     public UserResponseDto updateProfilePicture(UUID userId, MultipartFile file) {
+        validateOwnership(userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -96,6 +102,8 @@ public class UserService {
     }
 
     public UserResponseDto updateBanner(UUID userId, MultipartFile file) {
+        validateOwnership(userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -106,4 +114,14 @@ public class UserService {
         return new UserResponseDto(updatedUser.getId(), updatedUser.getUsername());
     }
 
+    private void validateOwnership(UUID userId) {
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isOwner = authenticatedUser.getId().equals(userId);
+        boolean isAdmin = authenticatedUser.getRole() == UserRole.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new ForbiddenOperationException("Você não tem permissão para alterar este usuário");
+        }
+    }
 }
