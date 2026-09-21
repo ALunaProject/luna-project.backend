@@ -9,8 +9,8 @@ import java.util.UUID;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // Lista os comentários de um post, do mais antigo para o mais novo
-    List<Comment> findByPostIdOrderByDataCriacaoAsc(UUID postId);
+    List<Comment> findByPostIdOrderByCreationDateAsc(UUID postId);
 
     // Lista os comentários feitos por um usuário específico
-    List<Comment> findByAutorIdOrderByDataCriacaoDesc(UUID autorId);
+    List<Comment> findByUserIdOrderByCreationDateDesc(UUID userId);
 }
