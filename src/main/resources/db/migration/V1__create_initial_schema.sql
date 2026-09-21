@@ -23,11 +23,11 @@ CREATE TABLE post (
 
 CREATE TABLE comments (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    conteudo VARCHAR(1000) NOT NULL,
-    autor_id BINARY(16) NOT NULL,
+    content VARCHAR(1000) NOT NULL,
+    user_id BINARY(16) NOT NULL,
     post_id BINARY(16) NOT NULL,
-    data_criacao DATETIME NOT NULL,
+    creation_date DATETIME NOT NULL,
     PRIMARY KEY (id),
-    CONSTRAINT fk_comments_autor FOREIGN KEY (autor_id) REFERENCES `user` (id),
+    CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES `user` (id),
     CONSTRAINT fk_comments_post FOREIGN KEY (post_id) REFERENCES post (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
