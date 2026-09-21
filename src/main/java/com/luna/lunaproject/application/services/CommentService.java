@@ -23,14 +23,14 @@ public class CommentService {
     private final PostRepository postRepository;
 
     public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
-        User autor = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
 
         Post post = postRepository.findById(commentRequestDTO.getPostId())
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + commentRequestDTO.getPostId()));
 
         Comment comment = Comment.builder()
-                .conteudo(commentRequestDTO.getConteudo())
-                .autor(autor)
+                .content(commentRequestDTO.getContent())
+                .user(user)
                 .post(post)
                 .build();
 
@@ -51,7 +51,7 @@ public class CommentService {
             throw new ResourceNotFoundException("Post not found with id: " + postId);
         }
 
-        List<Comment> comments = commentRepository.findByPostIdOrderByDataCriacaoAsc(postId);
+        List<Comment> comments = commentRepository.findByPostIdOrderByCreationDateAsc(postId);
         return comments.stream().map(this::toResponseDto).toList();
     }
 
@@ -61,7 +61,7 @@ public class CommentService {
 
         validateOwnership(comment);
 
-        comment.setConteudo(commentRequestDTO.getConteudo());
+        comment.setContent(commentRequestDTO.getContent());
         Comment updatedComment = commentRepository.save(comment);
 
         return toResponseDto(updatedComment);
@@ -82,7 +82,7 @@ public class CommentService {
     private void validateOwnership(Comment comment) {
         User authenticatedUser = getAuthenticatedUser();
 
-        boolean isOwner = comment.getAutor().getId().equals(authenticatedUser.getId());
+        boolean isOwner = comment.getUser().getId().equals(authenticatedUser.getId());
         boolean isAdmin = authenticatedUser.getRole() == UserRole.ADMIN;
 
         if (!isOwner && !isAdmin) {
@@ -97,11 +97,11 @@ public class CommentService {
     private CommentResponseDTO toResponseDto(Comment comment) {
         return CommentResponseDTO.builder()
                 .id(comment.getId())
-                .conteudo(comment.getConteudo())
-                .autorId(comment.getAutor().getId())
-                .autorNome(comment.getAutor().getUsername())
+                .content(comment.getContent())
+                .userId(comment.getUser().getId())
+                .username(comment.getUser().getUsername())
                 .postId(comment.getPost().getId())
-                .dataCriacao(comment.getDataCriacao())
+                .creationDate(comment.getCreationDate())
                 .build();
     }
 }
