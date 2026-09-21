@@ -12,7 +12,7 @@ INSERT INTO post (id, title, content, createion_date) VALUES
     (UUID_TO_BIN('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'), 'Melhor pista nos jogos de corrida', 'Para mim, uma pista bem feita precisa ter curvas técnicas e boas oportunidades de ultrapassagem.', '2026-09-05'),
     (UUID_TO_BIN('cccccccc-cccc-cccc-cccc-cccccccccccc'), 'Minha lista de jogos retrô', 'Separei alguns jogos antigos que ainda valem muito a pena conhecer.', '2026-09-10');
 
-INSERT INTO comments (conteudo, autor_id, post_id, data_criacao) VALUES
+INSERT INTO comments (content, user_id, post_id, creation_date) VALUES
     ('Eu começaria por um RPG clássico. A história costuma prender bastante.', UUID_TO_BIN('11111111-1111-1111-1111-111111111111'), UUID_TO_BIN('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), '2026-09-01 09:15:00'),
     ('Um lançamento recente pode ser mais fácil para quem está começando.', UUID_TO_BIN('22222222-2222-2222-2222-222222222222'), UUID_TO_BIN('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), '2026-09-01 09:30:00'),
     ('Depende do seu estilo: exploração, combate ou uma boa narrativa?', UUID_TO_BIN('33333333-3333-3333-3333-333333333333'), UUID_TO_BIN('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'), '2026-09-01 10:05:00'),
