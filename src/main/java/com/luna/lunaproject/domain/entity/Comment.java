@@ -21,21 +21,21 @@ public class Comment {
     private Long id;
 
     @Column(nullable = false, length = 1000)
-    private String conteudo;
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "autor_id", nullable = false)
-    private User autor;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "data_criacao", nullable = false, updatable = false)
-    private LocalDateTime dataCriacao;
+    @Column(name = "creation_date", nullable = false, updatable = false)
+    private LocalDateTime creationDate;
 
     @PrePersist
-    protected void aoPersistir() {
-        this.dataCriacao = LocalDateTime.now();
+    protected void onCreate() {
+        this.creationDate = LocalDateTime.now();
     }
 }
