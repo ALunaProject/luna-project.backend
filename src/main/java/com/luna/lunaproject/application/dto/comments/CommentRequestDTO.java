@@ -18,7 +18,7 @@ public class CommentRequestDTO {
 
     @NotBlank(message = "O conteúdo do comentário não pode estar vazio")
     @Size(max = 1000, message = "O comentário deve ter no máximo 1000 caracteres")
-    private String conteudo;
+    private String content;
 
     @NotNull(message = "O id do post é obrigatório")
     private UUID postId;
