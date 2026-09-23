@@ -8,6 +8,7 @@ import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.CommentRepository;
 import com.luna.lunaproject.domain.repository.PostRepository;
+import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
         User user = getAuthenticatedUser();
@@ -39,7 +41,7 @@ public class CommentService {
         return toResponseDto(savedComment);
     }
 
-    public CommentResponseDTO getCommentById(Long commentId) {
+    public CommentResponseDTO getCommentById(UUID commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
 
@@ -55,7 +57,16 @@ public class CommentService {
         return comments.stream().map(this::toResponseDto).toList();
     }
 
-    public CommentResponseDTO updateComment(Long commentId, CommentRequestDTO commentRequestDTO) {
+    public List<CommentResponseDTO> getCommentsByUser(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with id: " + userId);
+        }
+
+        List<Comment> comments = commentRepository.findByUserIdOrderByCreationDateDesc(userId);
+        return comments.stream().map(this::toResponseDto).toList();
+    }
+
+    public CommentResponseDTO updateComment(UUID commentId, CommentRequestDTO commentRequestDTO) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
 
@@ -67,7 +78,7 @@ public class CommentService {
         return toResponseDto(updatedComment);
     }
 
-    public String deleteComment(Long commentId) {
+    public String deleteComment(UUID commentId) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
 
         if (comment == null) {
