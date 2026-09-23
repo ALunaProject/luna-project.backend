@@ -1,8 +1,10 @@
 package com.luna.lunaproject.interfaces.controller;
 
+import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
 import com.luna.lunaproject.application.dto.user.UserCreateDto;
 import com.luna.lunaproject.application.dto.user.UserResponseDto;
 import com.luna.lunaproject.application.dto.user.UserUpdateDto;
+import com.luna.lunaproject.application.services.CommentService;
 import com.luna.lunaproject.application.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final CommentService commentService;
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
@@ -45,6 +48,12 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        List<UserResponseDto> response = userService.findAll();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable UUID id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
         UserResponseDto response = userService.updateUser(id, userUpdateDto);
@@ -55,6 +64,12 @@ public class UserController {
     public String deleteUserById(@PathVariable UUID id) {
         userService.deleteUser(id);
         return "User has been deleted";
+    }
+
+    @GetMapping("/{userId}/comments")
+    public ResponseEntity<Object> getAllCommentsInUserPage(@PathVariable UUID userId) {
+        List<CommentResponseDTO> response = commentService.getCommentsByUser(userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
