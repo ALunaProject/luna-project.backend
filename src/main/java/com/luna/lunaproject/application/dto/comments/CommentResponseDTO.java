@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CommentResponseDTO {
 
-    private Long id;
+    private UUID id;
     private String content;
     private UUID userId;
     private String username;
