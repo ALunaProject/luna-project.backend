@@ -1,6 +1,6 @@
 package com.luna.lunaproject.application.services;
 
-import com.luna.lunaproject.application.dto.comments.CommentRequestDTO;
+import com.luna.lunaproject.application.dto.comments.PostCommentRequestDTO;
 import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
 import com.luna.lunaproject.domain.entity.Comment;
 import com.luna.lunaproject.domain.entity.Post;
@@ -24,14 +24,14 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO createPostComment(PostCommentRequestDTO postCommentRequestDTO) {
         User user = getAuthenticatedUser();
 
-        Post post = postRepository.findById(commentRequestDTO.getPostId())
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + commentRequestDTO.getPostId()));
+        Post post = postRepository.findById(postCommentRequestDTO.getPostId())
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postCommentRequestDTO.getPostId()));
 
         Comment comment = Comment.builder()
-                .content(commentRequestDTO.getContent())
+                .content(postCommentRequestDTO.getContent())
                 .user(user)
                 .post(post)
                 .build();
@@ -66,13 +66,13 @@ public class CommentService {
         return comments.stream().map(this::toResponseDto).toList();
     }
 
-    public CommentResponseDTO updateComment(UUID commentId, CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO updatePostComment(UUID commentId, PostCommentRequestDTO postCommentRequestDTO) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
 
         validateOwnership(comment);
 
-        comment.setContent(commentRequestDTO.getContent());
+        comment.setContent(postCommentRequestDTO.getContent());
         Comment updatedComment = commentRepository.save(comment);
 
         return toResponseDto(updatedComment);

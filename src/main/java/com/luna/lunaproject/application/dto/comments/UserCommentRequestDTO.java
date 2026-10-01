@@ -14,12 +14,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCommentRequestDTO {
+public class UserCommentRequestDTO {
 
     @NotBlank(message = "O conteúdo do comentário não pode estar vazio")
     @Size(max = 1000, message = "O comentário deve ter no máximo 1000 caracteres")
     private String content;
 
-    @NotNull(message = "O id do post é obrigatório")
-    private UUID postId;
+    @NotNull(message = "O id do usuário é obrigatório")
+    private UUID userId;
 }

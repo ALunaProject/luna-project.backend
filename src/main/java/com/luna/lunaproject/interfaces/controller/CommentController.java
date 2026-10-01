@@ -1,6 +1,6 @@
 package com.luna.lunaproject.interfaces.controller;
 
-import com.luna.lunaproject.application.dto.comments.CommentRequestDTO;
+import com.luna.lunaproject.application.dto.comments.PostCommentRequestDTO;
 import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
 import com.luna.lunaproject.application.services.CommentService;
 import jakarta.validation.Valid;
@@ -19,8 +19,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<Object> createComment(@Valid @RequestBody CommentRequestDTO commentRequestDTO) {
-        CommentResponseDTO response = commentService.createComment(commentRequestDTO);
+    public ResponseEntity<Object> createComment(@Valid @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
+        CommentResponseDTO response = commentService.createPostComment(postCommentRequestDTO);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -31,8 +31,8 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateComment(@PathVariable UUID id, @Valid @RequestBody CommentRequestDTO commentRequestDTO) {
-        CommentResponseDTO response = commentService.updateComment(id, commentRequestDTO);
+    public ResponseEntity<Object> updateComment(@PathVariable UUID id, @Valid @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
+        CommentResponseDTO response = commentService.updatePostComment(id, postCommentRequestDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
