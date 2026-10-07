@@ -18,6 +18,7 @@ public class UserResponseDto {
     private String profilePicUrl;
     private String bannerUrl;
     private String role;
+    private String bio;
 
 
     public UserResponseDto(UUID id, String username, String email, String role) {
@@ -38,5 +39,7 @@ public class UserResponseDto {
         this.email = user.getEmail();
         this.profilePicUrl = user.getProfilePicUrl();
         this.bannerUrl = user.getBannerUrl();
+        this.bio = user.getBio();
+        this.role = user.getRole() != null ? user.getRole().getRole() : null;
     }
 }
