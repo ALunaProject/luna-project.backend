@@ -55,7 +55,8 @@ public class UserService {
                 user.getEmail(),
                 user.getProfilePicUrl(),
                 user.getBannerUrl(),
-                user.getRole().getRole()
+                user.getRole().getRole(),
+                user.getBio()
         );
     }
 
@@ -65,10 +66,25 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        user.setUsername(userUpdateDto.getUsername());
-        user.setProfilePicUrl(userUpdateDto.getProfilePicUrl());
-        user.setBannerUrl(userUpdateDto.getBannerUrl());
-        user.setBio(userUpdateDto.getBio());
+        String newUsername = userUpdateDto.getUsername();
+        if (!newUsername.equals(user.getUsername())) {
+            User existing = userRepository.findByUsername(newUsername);
+            if (existing != null && !existing.getId().equals(userId)) {
+                throw new UsernameAlreadyExistsException("Username já está em uso");
+            }
+        }
+        user.setUsername(newUsername);
+
+        // update parcial: campo null = "não mexe" (senão editar nome/bio apagava foto e banner)
+        if (userUpdateDto.getProfilePicUrl() != null) {
+            user.setProfilePicUrl(userUpdateDto.getProfilePicUrl());
+        }
+        if (userUpdateDto.getBannerUrl() != null) {
+            user.setBannerUrl(userUpdateDto.getBannerUrl());
+        }
+        if (userUpdateDto.getBio() != null) {
+            user.setBio(userUpdateDto.getBio());
+        }
         User updatedUser = userRepository.save(user);
 
         return new UserResponseDto(
