@@ -28,11 +28,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if(token != null) {
             var subjectId = tokenService.validateToken(token);
-            UserDetails user = userRepository.findById(UUID.fromString(subjectId)).orElse(null);
 
-            if (user != null) {
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            // token inválido (ex: "undefined" no localStorage) volta "" e UUID.fromString("") daria 500
+            if (!subjectId.isBlank()) {
+                UserDetails user = userRepository.findById(UUID.fromString(subjectId)).orElse(null);
+
+                if (user != null) {
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
         filterChain.doFilter(request, response);
