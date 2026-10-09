@@ -28,6 +28,10 @@ public class UserService {
     }
 
     public UserResponseDto createUser(UserCreateDto userCreateDto) {
+        if (ReservedUsernames.isReserved(userCreateDto.getUsername())) {
+            throw new ReservedUsernameException("Este username é reservado pelo sistema");
+        }
+
         User user = new User();
         user.setUsername(userCreateDto.getUsername());
         user.setEmail(userCreateDto.getEmail());
@@ -68,6 +72,10 @@ public class UserService {
 
         String newUsername = userUpdateDto.getUsername();
         if (!newUsername.equals(user.getUsername())) {
+            // quem já tem um nome reservado (conta antiga) ainda pode editar o resto; só não pode "trocar para" um
+            if (ReservedUsernames.isReserved(newUsername)) {
+                throw new ReservedUsernameException("Este username é reservado pelo sistema");
+            }
             User existing = userRepository.findByUsername(newUsername);
             if (existing != null && !existing.getId().equals(userId)) {
                 throw new UsernameAlreadyExistsException("Username já está em uso");
