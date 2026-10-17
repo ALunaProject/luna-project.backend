@@ -1,4 +1,4 @@
-package com.luna.lunaproject.application.services;
+package com.luna.lunaproject.application.exceptions;
 
 import java.util.Set;
 

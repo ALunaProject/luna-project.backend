@@ -2,13 +2,13 @@ package com.luna.lunaproject.application.services;
 
 import com.luna.lunaproject.application.dto.post.PostRequestDto;
 import com.luna.lunaproject.application.dto.post.PostResponseDto;
+import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Post;
 import com.luna.lunaproject.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
