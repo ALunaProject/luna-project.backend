@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface GameListRepository extends JpaRepository<GameList, UUID> {
-    List<GameList> findByUserId(UUID userId);
+    List<GameList> findAllByUserId(UUID userId);
     Optional<GameList> findByIdAndUserId(UUID id, UUID userId);
     boolean existsByUserIdAndNameIgnoreCase(UUID userId, String name);
 }
