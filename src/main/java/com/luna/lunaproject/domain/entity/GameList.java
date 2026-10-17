@@ -39,7 +39,6 @@ public class GameList {
 
     public static GameList defaultList(User user, ListType type, String name) {
         GameList list = new GameList();
-        list.setId(UUID.randomUUID());
         list.setUser(user);
         list.setListType(type);
         list.setName(name);
