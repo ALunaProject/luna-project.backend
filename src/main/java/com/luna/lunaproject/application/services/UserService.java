@@ -3,8 +3,11 @@ package com.luna.lunaproject.application.services;
 import com.luna.lunaproject.application.dto.user.UserCreateDto;
 import com.luna.lunaproject.application.dto.user.UserResponseDto;
 import com.luna.lunaproject.application.dto.user.UserUpdateDto;
+import com.luna.lunaproject.domain.entity.GameList;
 import com.luna.lunaproject.domain.entity.User;
+import com.luna.lunaproject.domain.enums.ListType;
 import com.luna.lunaproject.domain.enums.UserRole;
+import com.luna.lunaproject.domain.repository.GameListRepository;
 import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageUploadService imageUploadService;
+    private final GameListRepository listRepository;
 
     public List<UserResponseDto> findAll() {
         List<User> users = userRepository.findAll();
@@ -35,6 +39,11 @@ public class UserService {
         user.setPassword(encryptedPassword);
         user.setRole(UserRole.USER);
         User savedUser = userRepository.save(user);
+        listRepository.saveAll(List.of(
+                GameList.defaultList(savedUser, ListType.WISHLIST, "Quero Jogar"),
+                GameList.defaultList(savedUser, ListType.PLAYING,  "Jogando"),
+                GameList.defaultList(savedUser, ListType.PLAYED,   "Jogado")
+        ));
 
         return new UserResponseDto(
                 savedUser.getId(),

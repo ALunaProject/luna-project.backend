@@ -48,6 +48,11 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/lists").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/lists/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/lists/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/lists").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/lists/**").authenticated()
                         .anyRequest().authenticated()
                 )
 

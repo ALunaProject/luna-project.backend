@@ -14,8 +14,7 @@ public class GameCacheService {
     }
 
     public GameCacheResponse createGameCache(Integer appid) {
-        GameCache gameCache = gameRepository.findByAppid(appid);
-
+        GameCache gameCache = getOrCreateGameCacheEntity(appid);
         if (gameCache != null) {
             return new GameCacheResponse(gameCache.getAppid(), "This game already exists in cache.");
         }
@@ -25,6 +24,15 @@ public class GameCacheService {
         GameCache savedGame = gameRepository.save(newGame);
 
         return new GameCacheResponse(savedGame.getAppid(), "Game added to cache!");
+    }
+
+    public GameCache getOrCreateGameCacheEntity(Integer appid) {
+        return gameRepository.findById(appid)
+                .orElseGet(() -> {
+                    GameCache newGame = new GameCache();
+                    newGame.setAppid(appid);
+                    return gameRepository.save(newGame);
+                });
     }
 
     public GameCacheResponse getGameByAppid(Integer appid) {
