@@ -59,4 +59,14 @@ public class PostService {
         return "Post not found with id: " + postId;
         }
     }
+
+    public String updatePost(UUID postId, PostRequestDto postRequestDto) {
+        if  (postRepository.findById(postId).isPresent()) {
+            Post post = postRepository.findById(postId).get();
+            post.setContent(postRequestDto.getContent());
+            return "Post updated successfully";
+        }else  {
+        return "Post not found with id: " + postId;
+        }
+    }
 }

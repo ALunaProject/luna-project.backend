@@ -12,13 +12,11 @@ import java.util.UUID;
 public class PostResponseDto {
 
     private UUID id;
-    private String title;
     private String content;
     private LocalDate creation_date;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
-        this.title = post.getTitle();
         this.content = post.getContent();
         this.creation_date = post.getCreateion_date();
     }

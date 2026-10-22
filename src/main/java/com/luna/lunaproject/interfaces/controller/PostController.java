@@ -41,6 +41,11 @@ public class PostController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePost(@PathVariable UUID id,@Valid @RequestBody PostRequestDto postRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(id, postRequestDto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePostById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(id));
