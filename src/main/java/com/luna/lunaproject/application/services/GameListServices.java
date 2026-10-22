@@ -2,6 +2,7 @@ package com.luna.lunaproject.application.services;
 
 import com.luna.lunaproject.application.dto.gameList.GameListCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListResponse;
+import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.GameCache;
 import com.luna.lunaproject.domain.entity.GameList;
 import com.luna.lunaproject.domain.entity.User;
