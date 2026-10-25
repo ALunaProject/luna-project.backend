@@ -3,8 +3,12 @@ package com.luna.lunaproject.application.services;
 import com.luna.lunaproject.application.dto.user.UserCreateDto;
 import com.luna.lunaproject.application.dto.user.UserResponseDto;
 import com.luna.lunaproject.application.dto.user.UserUpdateDto;
+import com.luna.lunaproject.application.exceptions.*;
+import com.luna.lunaproject.domain.entity.GameList;
 import com.luna.lunaproject.domain.entity.User;
+import com.luna.lunaproject.domain.enums.ListType;
 import com.luna.lunaproject.domain.enums.UserRole;
+import com.luna.lunaproject.domain.repository.GameListRepository;
 import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageUploadService imageUploadService;
+    private final GameListRepository listRepository;
 
     public List<UserResponseDto> findAll() {
         List<User> users = userRepository.findAll();
@@ -28,6 +33,10 @@ public class UserService {
     }
 
     public UserResponseDto createUser(UserCreateDto userCreateDto) {
+        if (ReservedUsernames.isReserved(userCreateDto.getUsername())) {
+            throw new ReservedUsernameException("Este username é reservado pelo sistema");
+        }
+
         User user = new User();
         user.setUsername(userCreateDto.getUsername());
         user.setEmail(userCreateDto.getEmail());
@@ -35,6 +44,11 @@ public class UserService {
         user.setPassword(encryptedPassword);
         user.setRole(UserRole.USER);
         User savedUser = userRepository.save(user);
+        listRepository.saveAll(List.of(
+                GameList.defaultList(savedUser, ListType.WISHLIST, "Quero Jogar"),
+                GameList.defaultList(savedUser, ListType.PLAYING,  "Jogando"),
+                GameList.defaultList(savedUser, ListType.PLAYED,   "Jogado")
+        ));
 
         return new UserResponseDto(
                 savedUser.getId(),
@@ -55,7 +69,8 @@ public class UserService {
                 user.getEmail(),
                 user.getProfilePicUrl(),
                 user.getBannerUrl(),
-                user.getRole().getRole()
+                user.getRole().getRole(),
+                user.getBio()
         );
     }
 
@@ -65,10 +80,29 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        user.setUsername(userUpdateDto.getUsername());
-        user.setProfilePicUrl(userUpdateDto.getProfilePicUrl());
-        user.setBannerUrl(userUpdateDto.getBannerUrl());
-        user.setBio(userUpdateDto.getBio());
+        String newUsername = userUpdateDto.getUsername();
+        if (!newUsername.equals(user.getUsername())) {
+            // quem já tem um nome reservado (conta antiga) ainda pode editar o resto; só não pode "trocar para" um
+            if (ReservedUsernames.isReserved(newUsername)) {
+                throw new ReservedUsernameException("Este username é reservado pelo sistema");
+            }
+            User existing = userRepository.findByUsername(newUsername);
+            if (existing != null && !existing.getId().equals(userId)) {
+                throw new UsernameAlreadyExistsException("Username já está em uso");
+            }
+        }
+        user.setUsername(newUsername);
+
+        // update parcial: campo null = "não mexe" (senão editar nome/bio apagava foto e banner)
+        if (userUpdateDto.getProfilePicUrl() != null) {
+            user.setProfilePicUrl(userUpdateDto.getProfilePicUrl());
+        }
+        if (userUpdateDto.getBannerUrl() != null) {
+            user.setBannerUrl(userUpdateDto.getBannerUrl());
+        }
+        if (userUpdateDto.getBio() != null) {
+            user.setBio(userUpdateDto.getBio());
+        }
         User updatedUser = userRepository.save(user);
 
         return new UserResponseDto(

@@ -2,6 +2,8 @@ package com.luna.lunaproject.application.services;
 
 import com.luna.lunaproject.application.dto.comments.PostCommentRequestDTO;
 import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
+import com.luna.lunaproject.application.exceptions.ForbiddenOperationException;
+import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Comment;
 import com.luna.lunaproject.domain.entity.Post;
 import com.luna.lunaproject.domain.entity.User;
