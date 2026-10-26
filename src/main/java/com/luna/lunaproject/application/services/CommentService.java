@@ -1,12 +1,14 @@
 package com.luna.lunaproject.application.services;
 
-import com.luna.lunaproject.application.dto.comments.PostCommentRequestDTO;
+import com.luna.lunaproject.application.dto.comments.CommentRequestDTO;
 import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
+import com.luna.lunaproject.application.dto.comments.CommentTargetResolver;
 import com.luna.lunaproject.application.exceptions.ForbiddenOperationException;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Comment;
 import com.luna.lunaproject.domain.entity.Post;
 import com.luna.lunaproject.domain.entity.User;
+import com.luna.lunaproject.domain.enums.CommentTargetType;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.CommentRepository;
 import com.luna.lunaproject.domain.repository.PostRepository;
@@ -14,6 +16,7 @@ import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,83 +26,89 @@ import java.util.UUID;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
+    private final CommentTargetResolver targetResolver;
     private final UserRepository userRepository;
 
-    public CommentResponseDTO createPostComment(PostCommentRequestDTO postCommentRequestDTO) {
-        User user = getAuthenticatedUser();
-
-        Post post = postRepository.findById(postCommentRequestDTO.getPostId())
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postCommentRequestDTO.getPostId()));
+    @Transactional
+    public CommentResponseDTO create(CommentTargetType type, String rawTargetId, CommentRequestDTO dto) {
+        String targetId = targetResolver.resolve(type, rawTargetId);
 
         Comment comment = Comment.builder()
-                .content(postCommentRequestDTO.getContent())
-                .user(user)
-                .post(post)
+                .content(dto.getContent().trim())
+                .author(getAuthenticatedUser())
+                .targetType(type)
+                .targetId(targetId)
                 .build();
 
-        Comment savedComment = commentRepository.save(comment);
-
-        return toResponseDto(savedComment);
+        return toResponseDto(commentRepository.save(comment));
     }
 
-    public CommentResponseDTO getCommentById(UUID commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
-
-        return toResponseDto(comment);
+    @Transactional(readOnly = true)
+    public List<CommentResponseDTO> listByTarget(CommentTargetType type, String rawTargetId) {
+        String targetId = targetResolver.resolve(type, rawTargetId);
+        return commentRepository
+                .findByTargetTypeAndTargetIdOrderByCreationDateDesc(type, targetId)
+                .stream().map(this::toResponseDto).toList();
     }
 
     public List<CommentResponseDTO> getCommentsByPost(UUID postId) {
-        if (!postRepository.existsById(postId)) {
-            throw new ResourceNotFoundException("Post not found with id: " + postId);
-        }
-
-        List<Comment> comments = commentRepository.findByPostIdOrderByCreationDateAsc(postId);
-        return comments.stream().map(this::toResponseDto).toList();
+        return listByTarget(CommentTargetType.POST, postId.toString());
     }
 
+    @Transactional(readOnly = true)
     public List<CommentResponseDTO> getCommentsByUser(UUID userId) {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with id: " + userId);
         }
-
-        List<Comment> comments = commentRepository.findByUserIdOrderByCreationDateDesc(userId);
-        return comments.stream().map(this::toResponseDto).toList();
+        return commentRepository.findByAuthorIdOrderByCreationDateDesc(userId)
+                .stream().map(this::toResponseDto).toList();
     }
 
-    public CommentResponseDTO updatePostComment(UUID commentId, PostCommentRequestDTO postCommentRequestDTO) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
-
-        validateOwnership(comment);
-
-        comment.setContent(postCommentRequestDTO.getContent());
-        Comment updatedComment = commentRepository.save(comment);
-
-        return toResponseDto(updatedComment);
+    @Transactional(readOnly = true)
+    public CommentResponseDTO getCommentById(UUID commentId) {
+        return toResponseDto(findOrThrow(commentId));
     }
 
-    public String deleteComment(UUID commentId) {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
+    @Transactional
+    public CommentResponseDTO update(UUID commentId, CommentRequestDTO dto) {
+        Comment comment = findOrThrow(commentId);
+        validateCanEdit(comment);
+        comment.setContent(dto.getContent().trim());
+        return toResponseDto(commentRepository.save(comment));
+    }
 
-        if (comment == null) {
-            return "Comment not found with id: " + commentId;
-        }
-
-        validateOwnership(comment);
+    @Transactional
+    public String delete(UUID commentId) {
+        Comment comment = findOrThrow(commentId);
+        validateCanDelete(comment);
         commentRepository.delete(comment);
         return "Comment deleted successfully";
     }
 
-    private void validateOwnership(Comment comment) {
-        User authenticatedUser = getAuthenticatedUser();
+    private Comment findOrThrow(UUID id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + id));
+    }
 
-        boolean isOwner = comment.getUser().getId().equals(authenticatedUser.getId());
-        boolean isAdmin = authenticatedUser.getRole() == UserRole.ADMIN;
-
-        if (!isOwner && !isAdmin) {
+    // editar: só o autor ou admin
+    private void validateCanEdit(Comment comment) {
+        User auth = getAuthenticatedUser();
+        boolean isAuthor = comment.getAuthor().getId().equals(auth.getId());
+        boolean isAdmin = auth.getRole() == UserRole.ADMIN;
+        if (!isAuthor && !isAdmin) {
             throw new ForbiddenOperationException("Você não tem permissão para alterar este comentário");
+        }
+    }
+
+    // apagar: autor, admin, ou dono do perfil (moderar o próprio mural)
+    private void validateCanDelete(Comment comment) {
+        User auth = getAuthenticatedUser();
+        boolean isAuthor = comment.getAuthor().getId().equals(auth.getId());
+        boolean isAdmin = auth.getRole() == UserRole.ADMIN;
+        boolean isProfileOwner = comment.getTargetType() == CommentTargetType.USER_PROFILE
+                && comment.getTargetId().equals(auth.getId().toString());
+        if (!isAuthor && !isAdmin && !isProfileOwner) {
+            throw new ForbiddenOperationException("Você não tem permissão para apagar este comentário");
         }
     }
 
@@ -107,14 +116,16 @@ public class CommentService {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    private CommentResponseDTO toResponseDto(Comment comment) {
+    private CommentResponseDTO toResponseDto(Comment c) {
         return CommentResponseDTO.builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .userId(comment.getUser().getId())
-                .username(comment.getUser().getUsername())
-                .postId(comment.getPost().getId())
-                .creationDate(comment.getCreationDate())
+                .id(c.getId())
+                .content(c.getContent())
+                .userId(c.getAuthor().getId())
+                .username(c.getAuthor().getUsername())
+                .profilePicUrl(c.getAuthor().getProfilePicUrl())
+                .targetType(c.getTargetType().name())
+                .targetId(c.getTargetId())
+                .creationDate(c.getCreationDate())
                 .build();
     }
 }
