@@ -1,6 +1,7 @@
 package com.luna.lunaproject.application.services;
 
 import com.luna.lunaproject.application.dto.gameCache.GameCacheResponse;
+import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.GameCache;
 import com.luna.lunaproject.domain.repository.GameRepository;
 import org.springframework.stereotype.Service;
