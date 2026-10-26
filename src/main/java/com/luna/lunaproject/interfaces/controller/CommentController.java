@@ -1,14 +1,16 @@
 package com.luna.lunaproject.interfaces.controller;
 
-import com.luna.lunaproject.application.dto.comments.PostCommentRequestDTO;
+import com.luna.lunaproject.application.dto.comments.CommentRequestDTO;
 import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
 import com.luna.lunaproject.application.services.CommentService;
+import com.luna.lunaproject.domain.enums.CommentTargetType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,26 +20,34 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping
-    public ResponseEntity<Object> createComment(@Valid @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
-        CommentResponseDTO response = commentService.createPostComment(postCommentRequestDTO);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @PostMapping("/{type}/{targetId}")
+    public ResponseEntity<CommentResponseDTO> create(
+            @PathVariable CommentTargetType type,
+            @PathVariable String targetId,
+            @Valid @RequestBody CommentRequestDTO body) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(type, targetId, body));
+    }
+
+    @GetMapping("/{type}/{targetId}")
+    public ResponseEntity<List<CommentResponseDTO>> listByTarget(
+            @PathVariable CommentTargetType type,
+            @PathVariable String targetId) {
+        return ResponseEntity.ok(commentService.listByTarget(type, targetId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getCommentById(@PathVariable UUID id) {
-        CommentResponseDTO response = commentService.getCommentById(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<CommentResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(commentService.getCommentById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateComment(@PathVariable UUID id, @Valid @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
-        CommentResponseDTO response = commentService.updatePostComment(id, postCommentRequestDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<CommentResponseDTO> update(@PathVariable UUID id,
+                                                     @Valid @RequestBody CommentRequestDTO body) {
+        return ResponseEntity.ok(commentService.update(id, body));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCommentById(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.deleteComment(id));
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        return ResponseEntity.ok(commentService.delete(id));
     }
 }
