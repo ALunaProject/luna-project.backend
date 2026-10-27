@@ -15,4 +15,6 @@ public class GameCache {
     @Id
     @Column(name = "appid")
     private Integer appid;
+    @Column(name = "library_capsule", length = 500)
+    private String libraryCapsule;
 }
