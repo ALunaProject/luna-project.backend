@@ -1,6 +1,6 @@
 package com.luna.lunaproject.application.services;
 
-import com.luna.lunaproject.application.dto.gameCache.GameCacheRequest;
+import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.dto.gameCache.GameCacheResponse;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.GameCache;
@@ -15,7 +15,7 @@ public class GameCacheService {
         this.gameRepository = gameRepository;
     }
 
-    public GameCacheResponse createGameCache(GameCacheRequest req) {
+    public GameCacheResponse createGameCache(GameCacheCreate req) {
         GameCache gameCache = getOrCreateGameCacheEntity(req);
         GameCacheResponse.Assets responseAssets = convertAssets(req.getAssets());
         if (gameCache != null) {
@@ -29,7 +29,7 @@ public class GameCacheService {
         return new GameCacheResponse(savedGame.getAppid(), "Game added to cache!", responseAssets);
     }
 
-    public GameCache getOrCreateGameCacheEntity(GameCacheRequest req) {
+    public GameCache getOrCreateGameCacheEntity(GameCacheCreate req) {
         return gameRepository.findById(req.getAppid())
                 .map(existingGame -> {
                     if (req.getAssets() != null) {
@@ -49,7 +49,7 @@ public class GameCacheService {
                 });
     }
 
-    public GameCacheResponse getGameByAppid(GameCacheRequest req) {
+    public GameCacheResponse getGameByAppid(GameCacheCreate req) {
         GameCache gameCache = gameRepository.findById(req.getAppid())
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found on cache"));
         GameCacheResponse.Assets responseAssets = convertAssets(req.getAssets());
@@ -57,7 +57,7 @@ public class GameCacheService {
         return new GameCacheResponse(req.getAppid(), "Game founded in cache.", responseAssets);
     }
 
-    private GameCacheResponse.Assets convertAssets(GameCacheRequest.Assets requestAssets) {
+    private GameCacheResponse.Assets convertAssets(GameCacheCreate.Assets requestAssets) {
         if (requestAssets == null) {
             return null;
         }

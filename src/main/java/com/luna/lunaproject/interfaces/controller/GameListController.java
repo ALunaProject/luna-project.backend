@@ -1,6 +1,6 @@
 package com.luna.lunaproject.interfaces.controller;
 
-import com.luna.lunaproject.application.dto.gameCache.GameCacheRequest;
+import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListResponse;
 import com.luna.lunaproject.application.services.GameListServices;
@@ -33,19 +33,19 @@ public class GameListController {
     @PostMapping("/{listId}/games")
     private ResponseEntity<Object> addGamesToCustomList(
             @PathVariable UUID listId,
-            @RequestBody @Valid GameCacheRequest req,
+            @RequestBody @Valid GameCacheCreate req,
             @AuthenticationPrincipal User currentUser)
             throws AccessDeniedException {
         GameListResponse res = listServices.addGameToList(listId, req, currentUser.getId());
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{listId}/games")
+    @DeleteMapping("/{listId}/games/{appId}")
     private ResponseEntity<Object> removeGameOnList(
             @PathVariable UUID listId,
-            @RequestBody @Valid GameCacheRequest req,
+            @PathVariable Integer appId,
             @AuthenticationPrincipal User currentUser) throws AccessDeniedException {
-        GameListResponse res = listServices.deleteGameOnList(listId, currentUser.getId(), req);
+        GameListResponse res = listServices.deleteGameOnList(listId, currentUser.getId(), appId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

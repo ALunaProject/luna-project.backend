@@ -1,6 +1,6 @@
 package com.luna.lunaproject.application.services;
 
-import com.luna.lunaproject.application.dto.gameCache.GameCacheRequest;
+import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListResponse;
 import com.luna.lunaproject.application.exceptions.BusinessRuleException;
@@ -49,7 +49,7 @@ public class GameListServices {
     }
 
     @Transactional
-    public GameListResponse addGameToList(UUID listId, GameCacheRequest req, UUID userId) throws AccessDeniedException {
+    public GameListResponse addGameToList(UUID listId, GameCacheCreate req, UUID userId) throws AccessDeniedException {
         GameList list = listRepo.findById(listId)
                 .orElseThrow(() -> new ResourceNotFoundException("List not found: " + listId));
 
@@ -94,7 +94,7 @@ public class GameListServices {
     }
 
     @Transactional
-    public GameListResponse deleteGameOnList(UUID listId, UUID userId, GameCacheRequest req) throws AccessDeniedException {
+    public GameListResponse deleteGameOnList(UUID listId, UUID userId, Integer appId) throws AccessDeniedException {
         GameList list = listRepo.findById(listId)
                 .orElseThrow(() -> new ResourceNotFoundException("List not found"));
 
@@ -102,8 +102,8 @@ public class GameListServices {
             throw new AccessDeniedException("You can't modify this list");
         }
 
-        GameCache game = gameRepo.findById(req.getAppid())
-                .orElseThrow(() -> new ResourceNotFoundException("Game not found: " + req.getAppid()));
+        GameCache game = gameRepo.findById(appId)
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found: " + appId));
 
         list.getGames().remove(game);
 

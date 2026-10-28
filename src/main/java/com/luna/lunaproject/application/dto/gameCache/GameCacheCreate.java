@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameCacheRequest {
+public class GameCacheCreate {
     @NotNull
     private Integer appid;
 
