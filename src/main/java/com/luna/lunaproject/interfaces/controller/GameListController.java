@@ -1,5 +1,6 @@
 package com.luna.lunaproject.interfaces.controller;
 
+import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListResponse;
 import com.luna.lunaproject.application.services.GameListServices;
@@ -29,13 +30,13 @@ public class GameListController {
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{listId}/games/{appId}")
+    @PostMapping("/{listId}/games")
     private ResponseEntity<Object> addGamesToCustomList(
             @PathVariable UUID listId,
-            @PathVariable Integer appId,
+            @RequestBody @Valid GameCacheCreate req,
             @AuthenticationPrincipal User currentUser)
             throws AccessDeniedException {
-        GameListResponse res = listServices.addGameToList(listId, appId, currentUser.getId());
+        GameListResponse res = listServices.addGameToList(listId, req, currentUser.getId());
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
@@ -66,9 +67,9 @@ public class GameListController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/{currentUser}")
     private ResponseEntity<Object> getAllListByUser(
-            @AuthenticationPrincipal User currentUser
+            @PathVariable User currentUser
     ) {
         List<GameListResponse> res = listServices.getAllUserLists(currentUser.getId());
         return new ResponseEntity<>(res, HttpStatus.OK);
