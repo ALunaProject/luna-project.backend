@@ -6,11 +6,13 @@ import com.luna.lunaproject.application.dto.comments.CommentTargetResolver;
 import com.luna.lunaproject.application.exceptions.ForbiddenOperationException;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Comment;
+import com.luna.lunaproject.domain.entity.GameCache;
 import com.luna.lunaproject.domain.entity.Post;
 import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.CommentTargetType;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.CommentRepository;
+import com.luna.lunaproject.domain.repository.GameRepository;
 import com.luna.lunaproject.domain.repository.PostRepository;
 import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +30,17 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentTargetResolver targetResolver;
     private final UserRepository userRepository;
+    private final GameRepository gameRepo;
+    private final GameCacheService gameCacheService;
+
 
     @Transactional
     public CommentResponseDTO create(CommentTargetType type, String rawTargetId, CommentRequestDTO dto) {
         String targetId = targetResolver.resolve(type, rawTargetId);
+
+        if (type.equals(CommentTargetType.GAME)) {
+            GameCache game = gameCacheService.getOrCreateGameCacheEntity(Integer.valueOf(rawTargetId));
+        }
 
         Comment comment = Comment.builder()
                 .content(dto.getContent().trim())
