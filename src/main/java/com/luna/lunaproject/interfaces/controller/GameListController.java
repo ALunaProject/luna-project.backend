@@ -20,10 +20,10 @@ import java.util.UUID;
 @RequestMapping(path = "/api/lists")
 @RequiredArgsConstructor
 public class GameListController {
-    private final GameListServices listServices;
+    public final GameListServices listServices;
 
     @PostMapping
-    private ResponseEntity<Object> createCustomList(
+    public ResponseEntity<Object> createCustomList(
             @Valid @RequestBody GameListCreate req,
             @AuthenticationPrincipal User currentUserId) {
         GameListResponse res = listServices.createCustom(req, currentUserId.getId());
@@ -31,7 +31,7 @@ public class GameListController {
     }
 
     @PostMapping("/{listId}/games")
-    private ResponseEntity<Object> addGamesToCustomList(
+    public ResponseEntity<Object> addGamesToCustomList(
             @PathVariable UUID listId,
             @RequestBody @Valid GameCacheCreate req,
             @AuthenticationPrincipal User currentUser)
@@ -41,7 +41,7 @@ public class GameListController {
     }
 
     @DeleteMapping("/{listId}/games/{appId}")
-    private ResponseEntity<Object> removeGameOnList(
+    public ResponseEntity<Object> removeGameOnList(
             @PathVariable UUID listId,
             @PathVariable Integer appId,
             @AuthenticationPrincipal User currentUser) throws AccessDeniedException {
@@ -50,7 +50,7 @@ public class GameListController {
     }
 
     @DeleteMapping("/{listId}")
-    private ResponseEntity<Object> deleteList(
+    public ResponseEntity<Object> deleteList(
             @PathVariable UUID listId,
             @AuthenticationPrincipal User currentUser) throws AccessDeniedException {
         String res = listServices.deleteList(listId, currentUser.getId());
@@ -58,7 +58,7 @@ public class GameListController {
     }
 
     @PutMapping("/{listId}")
-    private ResponseEntity<Object> renameList(
+    public ResponseEntity<Object> renameList(
             @PathVariable UUID listId,
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody GameListCreate req
@@ -67,11 +67,11 @@ public class GameListController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("/{currentUser}")
-    private ResponseEntity<Object> getAllListByUser(
-            @PathVariable User currentUser
+    @GetMapping("/{userId}")
+    public ResponseEntity<Object> getAllListByUser(
+            @PathVariable UUID userId
     ) {
-        List<GameListResponse> res = listServices.getAllUserLists(currentUser.getId());
+        List<GameListResponse> res = listServices.getAllUserLists(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }

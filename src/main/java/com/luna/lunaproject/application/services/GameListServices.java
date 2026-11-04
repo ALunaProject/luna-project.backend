@@ -19,7 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
+import java.text.Collator;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -112,8 +115,25 @@ public class GameListServices {
 
     @Transactional
     public List<GameListResponse> getAllUserLists(UUID userId) {
-        List<GameList> userLists = listRepo.findAllByUserId(userId);
-        return userLists.stream().map(GameListResponse::new).toList();
+        // para listar em ordem especifica
+        Collator collator = Collator.getInstance(Locale.forLanguageTag("pt-BR"));
+        collator.setStrength(Collator.SECONDARY);
+
+        return listRepo.findAllByUserId(userId).stream()
+                .sorted(Comparator
+                        .comparingInt((GameList l) -> defaultListOrder(l.getListType()))
+                        .thenComparing(GameList::getName, collator))
+                .map(GameListResponse::new)
+                .toList();
+    }
+
+    private int defaultListOrder(ListType type) {
+        return switch (type) {
+            case WISHLIST -> 0;
+            case PLAYING  -> 1;
+            case PLAYED   -> 2;
+            default       -> 3; // ordem alfabética
+        };
     }
 
 
