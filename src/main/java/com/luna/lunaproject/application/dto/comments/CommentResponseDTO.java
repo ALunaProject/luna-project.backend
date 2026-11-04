@@ -13,11 +13,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponseDTO {
-
     private UUID id;
     private String content;
     private UUID userId;
     private String username;
-    private UUID postId;
+    private String profilePicUrl;
+    private String targetType;         // "POST", "GAME"...
+    private String targetId;
     private LocalDateTime creationDate;
 }
