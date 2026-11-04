@@ -1,5 +1,6 @@
 package com.luna.lunaproject.interfaces.controller;
 
+import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListResponse;
 import com.luna.lunaproject.application.services.GameListServices;
@@ -19,28 +20,28 @@ import java.util.UUID;
 @RequestMapping(path = "/api/lists")
 @RequiredArgsConstructor
 public class GameListController {
-    private final GameListServices listServices;
+    public final GameListServices listServices;
 
     @PostMapping
-    private ResponseEntity<Object> createCustomList(
+    public ResponseEntity<Object> createCustomList(
             @Valid @RequestBody GameListCreate req,
             @AuthenticationPrincipal User currentUserId) {
         GameListResponse res = listServices.createCustom(req, currentUserId.getId());
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{listId}/games/{appId}")
-    private ResponseEntity<Object> addGamesToCustomList(
+    @PostMapping("/{listId}/games")
+    public ResponseEntity<Object> addGamesToCustomList(
             @PathVariable UUID listId,
-            @PathVariable Integer appId,
+            @RequestBody @Valid GameCacheCreate req,
             @AuthenticationPrincipal User currentUser)
             throws AccessDeniedException {
-        GameListResponse res = listServices.addGameToList(listId, appId, currentUser.getId());
+        GameListResponse res = listServices.addGameToList(listId, req, currentUser.getId());
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @DeleteMapping("/{listId}/games/{appId}")
-    private ResponseEntity<Object> removeGameOnList(
+    public ResponseEntity<Object> removeGameOnList(
             @PathVariable UUID listId,
             @PathVariable Integer appId,
             @AuthenticationPrincipal User currentUser) throws AccessDeniedException {
@@ -49,7 +50,7 @@ public class GameListController {
     }
 
     @DeleteMapping("/{listId}")
-    private ResponseEntity<Object> deleteList(
+    public ResponseEntity<Object> deleteList(
             @PathVariable UUID listId,
             @AuthenticationPrincipal User currentUser) throws AccessDeniedException {
         String res = listServices.deleteList(listId, currentUser.getId());
@@ -57,7 +58,7 @@ public class GameListController {
     }
 
     @PutMapping("/{listId}")
-    private ResponseEntity<Object> renameList(
+    public ResponseEntity<Object> renameList(
             @PathVariable UUID listId,
             @AuthenticationPrincipal User currentUser,
             @Valid @RequestBody GameListCreate req
@@ -66,11 +67,11 @@ public class GameListController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping
-    private ResponseEntity<Object> getAllListByUser(
-            @AuthenticationPrincipal User currentUser
+    @GetMapping("/{userId}")
+    public ResponseEntity<Object> getAllListByUser(
+            @PathVariable UUID userId
     ) {
-        List<GameListResponse> res = listServices.getAllUserLists(currentUser.getId());
+        List<GameListResponse> res = listServices.getAllUserLists(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
