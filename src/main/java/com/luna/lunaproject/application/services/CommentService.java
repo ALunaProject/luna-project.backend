@@ -3,6 +3,7 @@ package com.luna.lunaproject.application.services;
 import com.luna.lunaproject.application.dto.comments.CommentRequestDTO;
 import com.luna.lunaproject.application.dto.comments.CommentResponseDTO;
 import com.luna.lunaproject.application.dto.comments.CommentTargetResolver;
+import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.exceptions.ForbiddenOperationException;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Comment;
@@ -30,7 +31,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentTargetResolver targetResolver;
     private final UserRepository userRepository;
-    private final GameRepository gameRepo;
     private final GameCacheService gameCacheService;
 
 
@@ -39,7 +39,9 @@ public class CommentService {
         String targetId = targetResolver.resolve(type, rawTargetId);
 
         if (type.equals(CommentTargetType.GAME)) {
-            GameCache game = gameCacheService.getOrCreateGameCacheEntity(Integer.valueOf(rawTargetId));
+            GameCacheCreate req = new GameCacheCreate();
+            req.setAppid(Integer.valueOf(rawTargetId));
+            GameCache game = gameCacheService.getOrCreateGameCacheEntity(req);
         }
 
         Comment comment = Comment.builder()

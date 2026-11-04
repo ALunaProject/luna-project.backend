@@ -1,7 +1,7 @@
 package com.luna.lunaproject.application.dto.comments;
 
+import com.luna.lunaproject.application.exceptions.BusinessRuleException;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
-import com.luna.lunaproject.application.services.BusinessRuleException;
 import com.luna.lunaproject.domain.enums.CommentTargetType;
 import com.luna.lunaproject.domain.repository.PostRepository;
 import com.luna.lunaproject.domain.repository.UserRepository;
