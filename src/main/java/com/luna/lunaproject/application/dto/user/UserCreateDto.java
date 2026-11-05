@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
@@ -20,6 +19,11 @@ public class UserCreateDto {
     private String username;
     @Email(message = "O campo [email] deve conter um e-mail válido")
     private String email;
-    @Length(min = 6, max = 100, message = "A senha deve ter entre 6 a 100 caracteres.")
+    // mesma regra do checklist do front (utils/passwordRules.ts): 8 a 100 caracteres, com minúscula, maiúscula, número e caractere especial
+    @NotBlank(message = "A senha é obrigatória")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,100}$",
+            message = "A senha deve ter de 8 a 100 caracteres, com letra maiúscula, minúscula, número e caractere especial."
+    )
     private String password;
 }
