@@ -5,10 +5,12 @@ import com.luna.lunaproject.application.dto.post.PostRequestDto;
 import com.luna.lunaproject.application.dto.post.PostResponseDto;
 import com.luna.lunaproject.application.services.CommentService;
 import com.luna.lunaproject.application.services.PostService;
+import com.luna.lunaproject.domain.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,8 @@ public class PostController {
 
 
     @PostMapping
-    public ResponseEntity<Object> createPost(@Valid @RequestBody PostRequestDto postRequestDto) {
-        PostResponseDto response = postService.createPost(postRequestDto);
+    public ResponseEntity<Object> createPost(@Valid @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal User currentUserId) {
+        PostResponseDto response = postService.createPost(postRequestDto, currentUserId.getId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

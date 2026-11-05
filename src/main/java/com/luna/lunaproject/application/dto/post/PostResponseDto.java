@@ -14,10 +14,12 @@ public class PostResponseDto {
     private UUID id;
     private String content;
     private LocalDate creation_date;
+    private UUID user_id;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.content = post.getContent();
         this.creation_date = post.getCreateion_date();
+        this.user_id = post.getUser().getId();
     }
 }

@@ -4,7 +4,9 @@ import com.luna.lunaproject.application.dto.post.PostRequestDto;
 import com.luna.lunaproject.application.dto.post.PostResponseDto;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Post;
+import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.repository.PostRepository;
+import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +19,21 @@ import java.util.UUID;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    public PostResponseDto createPost(PostRequestDto postRequestDto) {
+    public PostResponseDto createPost(PostRequestDto postRequestDto, UUID user_id) {
         Post post = new Post();
-        post.setTitle(postRequestDto.getTitle());
+        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         post.setContent(postRequestDto.getContent());
         post.setCreateion_date(LocalDate.now());
+        post.setUser(user);
         Post savedPost = postRepository.save(post);
 
         return new PostResponseDto(
                 savedPost.getId(),
-                savedPost.getTitle(),
                 savedPost.getContent(),
-                savedPost.getCreateion_date()
-
+                savedPost.getCreateion_date(),
+                savedPost.getUser().getId()
         );
     }
 
@@ -40,9 +43,9 @@ public class PostService {
 
         return new PostResponseDto(
                 post.getId(),
-                post.getTitle(),
                 post.getContent(),
-                post.getCreateion_date()
+                post.getCreateion_date(),
+                post.getUser().getId()
         );
     }
 
