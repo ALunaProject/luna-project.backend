@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
@@ -17,4 +18,9 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
     List<Comment> findByAuthorIdOrderByCreationDateDesc(UUID authorId);
 
     void deleteByTargetTypeAndTargetId(CommentTargetType type, String targetId);
+
+    Optional<Comment> findFirstByAuthorIdOrderByCreationDateDesc(UUID authorId);
+
+    boolean existsByAuthorIdAndTargetTypeAndTargetIdAndContentIgnoreCase(
+            UUID authorId, CommentTargetType type, String targetId, String content);
 }

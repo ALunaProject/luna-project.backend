@@ -17,10 +17,14 @@ import com.luna.lunaproject.domain.repository.GameRepository;
 import com.luna.lunaproject.domain.repository.PostRepository;
 import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +41,11 @@ public class CommentService {
     @Transactional
     public CommentResponseDTO create(CommentTargetType type, String rawTargetId, CommentRequestDTO dto) {
         String targetId = targetResolver.resolve(type, rawTargetId);
+        User author = getAuthenticatedUser();
+        String content = dto.getContent().trim();
+
+        checkCooldown(author);
+        checkDuplicate(author, type, targetId, content);
 
         if (type.equals(CommentTargetType.GAME)) {
             GameCacheCreate req = new GameCacheCreate();
@@ -120,6 +129,31 @@ public class CommentService {
                 && comment.getTargetId().equals(auth.getId().toString());
         if (!isAuthor && !isAdmin && !isProfileOwner) {
             throw new ForbiddenOperationException("Você não tem permissão para apagar este comentário");
+        }
+    }
+
+    private static final Duration COMMENT_COOLDOWN = Duration.ofMinutes(2);
+
+    private void checkCooldown(User author) {
+        commentRepository.findFirstByAuthorIdOrderByCreationDateDesc(author.getId())
+                .ifPresent(last -> {
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime availableAt = last.getCreationDate().plus(COMMENT_COOLDOWN);
+                    if (now.isBefore(availableAt)) {
+                        long seconds = Math.max(1, Duration.between(now, availableAt).toSeconds());
+                        throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                                "Aguarde " + seconds + " segundos para comentar novamente");
+                    }
+                });
+    }
+
+    private void checkDuplicate(User author, CommentTargetType type, String targetId, String content) {
+        boolean duplicated = commentRepository
+                .existsByAuthorIdAndTargetTypeAndTargetIdAndContentIgnoreCase(
+                        author.getId(), type, targetId, content);
+        if (duplicated) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Você já fez um comentário idêntico aqui");
         }
     }
 
