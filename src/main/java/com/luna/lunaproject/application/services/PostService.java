@@ -5,11 +5,13 @@ import com.luna.lunaproject.application.dto.post.PostResponseDto;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Post;
 import com.luna.lunaproject.domain.entity.User;
+import com.luna.lunaproject.domain.model.TagCatalog;
 import com.luna.lunaproject.domain.repository.PostRepository;
 import com.luna.lunaproject.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -26,27 +28,19 @@ public class PostService {
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         post.setContent(postRequestDto.getContent());
         post.setCreateion_date(LocalDate.now());
+        post.setCreatedAt(Instant.now());
         post.setUser(user);
+        post.setTagIds(TagCatalog.requireValid(postRequestDto.getTagIds()));
         Post savedPost = postRepository.save(post);
 
-        return new PostResponseDto(
-                savedPost.getId(),
-                savedPost.getContent(),
-                savedPost.getCreateion_date(),
-                savedPost.getUser().getId()
-        );
+        return new PostResponseDto(savedPost);
     }
 
     public PostResponseDto getPostById(UUID postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + postId));
 
-        return new PostResponseDto(
-                post.getId(),
-                post.getContent(),
-                post.getCreateion_date(),
-                post.getUser().getId()
-        );
+        return new PostResponseDto(post);
     }
 
     public List<PostResponseDto> getAllPosts() {
