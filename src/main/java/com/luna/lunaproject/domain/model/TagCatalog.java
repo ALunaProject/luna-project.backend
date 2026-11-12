@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public final class TagCatalog {
 
-    public static final int MAX_TAGS_PER_POST = 5;
+    public static final int MAX_TAGS_PER_POST = 10;
 
     private static final List<Tag> TAGS = load();
     private static final Map<Integer, Tag> BY_ID = TAGS.stream()
