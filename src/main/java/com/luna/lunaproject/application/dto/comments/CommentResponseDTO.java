@@ -19,5 +19,8 @@ public class CommentResponseDTO {
     private UUID userId;
     private String username;
     private UUID postId;
+    private String profilePicUrl;
+    private String targetType;
+    private String targetId;
     private LocalDateTime creationDate;
 }
