@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.luna.lunaproject.domain.enums.CommentTargetType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,17 +27,32 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User author;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "post_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = true)
     private Post post;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_type", length = 30)
+    private CommentTargetType targetType;
+
+    @Column(name = "target_id", length = 100)
+    private String targetId;
 
     @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate;
 
     @PrePersist
     protected void onCreate() {
-        this.creationDate = LocalDateTime.now();
+        if (this.creationDate == null) {
+            this.creationDate = LocalDateTime.now();
+        }
+        if (this.targetType == null && this.post != null) {
+            this.targetType = CommentTargetType.POST;
+        }
+        if (this.targetId == null && this.post != null) {
+            this.targetId = this.post.getId().toString();
+        }
     }
 }
