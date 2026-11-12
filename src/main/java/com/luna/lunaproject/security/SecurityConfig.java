@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users").permitAll() //mudar pra has role admin dps
                         .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/post/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/post/**").authenticated()
                         .requestMatchers("/error").permitAll()
