@@ -61,6 +61,7 @@ public class PostService {
         if  (postRepository.findById(postId).isPresent()) {
             Post post = postRepository.findById(postId).get();
             post.setContent(postRequestDto.getContent());
+            postRepository.save(post);
             return "Post updated successfully";
         }else  {
         return "Post not found with id: " + postId;
