@@ -11,15 +11,10 @@ import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
 
-    @EntityGraph(attributePaths = {"author", "post"})
-    List<Comment> findByTargetTypeAndTargetIdOrderByCreationDateDesc(
-            CommentTargetType type, String targetId);
+    @EntityGraph(attributePaths = "author")   // evita N+1 ao montar o username
+    List<Comment> findByTargetTypeAndTargetIdOrderByCreationDateDesc(CommentTargetType type, String targetId);
 
-    @EntityGraph(attributePaths = {"author", "post"})
-    Optional<Comment> findFirstByAuthorIdAndTargetTypeAndTargetIdOrderByCreationDateDesc(
-            UUID authorId, CommentTargetType targetType, String targetId);
-
-    @EntityGraph(attributePaths = {"author", "post"})
+    @EntityGraph(attributePaths = "author")
     List<Comment> findByAuthorIdOrderByCreationDateDesc(UUID authorId);
 
     void deleteByTargetTypeAndTargetId(CommentTargetType type, String targetId);
@@ -28,17 +23,4 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 
     boolean existsByAuthorIdAndTargetTypeAndTargetIdAndContentIgnoreCase(
             UUID authorId, CommentTargetType type, String targetId, String content);
-
-    // Mantém comentários antigos de posts acessíveis enquanto linhas legadas ainda não têm target_type.
-    @EntityGraph(attributePaths = {"author", "post"})
-    List<Comment> findByPostIdAndTargetTypeIsNullOrderByCreationDateDesc(UUID postId);
-
-    @EntityGraph(attributePaths = {"author", "post"})
-    Optional<Comment> findFirstByAuthorIdAndPostIdAndTargetTypeIsNullOrderByCreationDateDesc(
-            UUID authorId, UUID postId);
-
-    boolean existsByAuthorIdAndPostIdAndTargetTypeIsNullAndContentIgnoreCase(
-            UUID authorId, UUID postId, String content);
-
-    void deleteByPostIdAndTargetTypeIsNull(UUID postId);
 }
