@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -37,9 +38,16 @@ public class UserService {
             throw new ReservedUsernameException("Este username é reservado pelo sistema");
         }
 
+        String normalizedEmail = userCreateDto.getEmail().trim().toLowerCase(Locale.ROOT);
+        if (userRepository.findByEmailIgnoreCase(normalizedEmail) != null) {
+            throw new EmailAlreadyExistsException(
+                    "Este e-mail já está cadastrado. Faça login ou use outro e-mail."
+            );
+        }
+
         User user = new User();
         user.setUsername(userCreateDto.getUsername());
-        user.setEmail(userCreateDto.getEmail());
+        user.setEmail(normalizedEmail);
         String encryptedPassword = new BCryptPasswordEncoder().encode(userCreateDto.getPassword());//encriptogata
         user.setPassword(encryptedPassword);
         user.setRole(UserRole.USER);

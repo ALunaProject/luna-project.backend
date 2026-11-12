@@ -1,5 +1,6 @@
 package com.luna.lunaproject.interfaces.controller;
 
+import com.luna.lunaproject.application.exceptions.EmailAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +11,12 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateEmail(EmailAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("message", ex.getMessage()));
+    }
 
     // Falha de validação (@Valid): devolve a primeira mensagem em { "message": "..." } pro front mostrar na tela
     @ExceptionHandler(MethodArgumentNotValidException.class)
