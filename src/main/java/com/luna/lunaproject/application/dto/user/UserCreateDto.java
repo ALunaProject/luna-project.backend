@@ -17,6 +17,7 @@ public class UserCreateDto {
     @NotBlank
     @Pattern(regexp = "\\S+", message = "O campo [username] não pode ter espaço")
     private String username;
+    @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "O campo [email] deve conter um e-mail válido")
     private String email;
     // mesma regra do checklist do front (utils/passwordRules.ts): 8 a 100 caracteres, com minúscula, maiúscula, número e caractere especial
