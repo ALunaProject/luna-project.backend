@@ -58,6 +58,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/lists/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/lists/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/lists/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/ratings/games/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/ratings/games").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/ratings/games").authenticated()
                         .anyRequest().authenticated()
                 )
 
