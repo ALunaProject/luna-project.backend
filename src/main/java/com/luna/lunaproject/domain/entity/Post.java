@@ -3,6 +3,7 @@ package com.luna.lunaproject.domain.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +18,7 @@ public class Post {
     private UUID id;
     private String content;
     private LocalDate createion_date;
+    private Instant createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
