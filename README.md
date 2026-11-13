@@ -1,15 +1,19 @@
 # 🚀 Luna Project - BackEnd
 
-Bem-vindo ao **Luna API**, o coração do Luna Project! Esta API RESTful fornece todos os endpoints necessários para o funcionamento do site, incluindo autenticação, gerenciamento de usuários, jogos, posts, comentários e listas de jogos. Desenvolvida com **Spring Boot**, segue os princípios de uma arquitetura limpa e escalável.
+Bem-vindo ao **Luna API**, o coração do Luna Project! Esta API RESTful fornece todos os endpoints necessários para o
+funcionamento do site, incluindo autenticação, gerenciamento de usuários, jogos, posts, comentários e listas de jogos.
+Desenvolvida com **Spring Boot**, segue os princípios de uma arquitetura limpa e escalável.
 
 _Esta versão é uma MVP (Minimum Viable Product) do que será o projeto futuramente._
-_Desenvolvido por Team Luna - disponível no [Figma Community](https://www.figma.com/community/file/1559988919515428165)._
+_Desenvolvido por Team Luna - disponível
+no [Figma Community](https://www.figma.com/community/file/1559988919515428165)._
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-A estrutura do projeto é organizada em camadas para facilitar a manutenção, testes e evolução da aplicação, como exemplificado abaixo:
+A estrutura do projeto é organizada em camadas para facilitar a manutenção, testes e evolução da aplicação, como
+exemplificado abaixo:
 
 ```
 src/
@@ -58,7 +62,7 @@ src/
     │               │   │   # POJOs com anotações @Data, @Builder, @Valid
     │               │   │   # Definem o contrato da API (request/response)
     │               │   │   # Isolam as entidades do mundo externo
-    │               │   │   # Agrupados por funcionalidade: auth, user, game, post, comment
+    │               │   │   # Agrupados por funcionalidade: auth, user, gameCache, post, comment
     │               │   │
     │               │   ├── mapper/           # Mapeadores Entity ↔ DTO usando MapStruct
     │               │   │   # Interfaces com métodos toEntity(), toDto(), toResponseDto()
@@ -97,37 +101,37 @@ src/
 
 ## 📦 Entidades e Relacionamentos
 
-| **Entidade** | **Descrição** | **Relacionamentos** |
-|--------------|---------------|---------------------|
-| **User** | Usuários do sistema (id, nome, email, senha, role, dataCriacao) | Um usuário pode ter vários posts, comentários e listas de jogos |
-| **Game** | Jogos cadastrados (id, nome, genero, descricao, dataLancamento) | Um jogo pode aparecer em várias listas de usuários |
-| **Post** | Posts de "Looking For Game" (id, titulo, conteudo, status, autor, dataCriacao) | Pertence a um usuário; pode ter vários comentários |
-| **Comment** | Comentários nos posts (id, conteudo, autor, post, dataCriacao) | Pertence a um usuário e a um post |
-| **GameList** | Listas personalizadas de jogos (relacionamento N:N entre User e Game) | Relaciona um usuário a um jogo com um status (favorito, wishlist, jogando) |
+| **Entidade**  | **Descrição**                                                                  | **Relacionamentos**                                                        |
+|---------------|--------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| **User**      | Usuários do sistema (id, nome, email, senha, role, dataCriacao)                | Um usuário pode ter vários posts, comentários e listas de jogos            |
+| **GameCache** | Cache simples de Jogos cadastrados na api externa (appid, mensagem)            | Um jogo pode aparecer em várias listas de usuários                         |
+| **Post**      | Posts de "Looking For Game" (id, titulo, conteudo, status, autor, dataCriacao) | Pertence a um usuário; pode ter vários comentários                         |
+| **Comment**   | Comentários nos posts (id, conteudo, autor, post, dataCriacao)                 | Pertence a um usuário e a um post                                          |
+| **GameList**  | Listas personalizadas de jogos (relacionamento N:N entre User e Game)          | Relaciona um usuário a um jogo com um status (favorito, wishlist, jogando) |
 
 ---
 
 ## 🛠️ Ferramentas Utilizadas
 
-| Área | Tecnologia |
-|------|------------|
-| **Linguagem** | **Java 17+** |
-| **Framework** | **Spring Boot 3.x** |
-| **ORM** | **Spring Data JPA / Hibernate** |
-| **Segurança** | **Spring Security + JWT** |
-| **Documentação API** | **SpringDoc OpenAPI (Swagger)** |
-| **Mapper** | **MapStruct** |
-| **Banco de Dados** | **PostgreSQL** (produção) / **H2** (desenvolvimento) |
-| **Migração de Banco** | **Flyway** |
-| **Validação** | **Hibernate Validator** |
-| **Logging** | **SLF4J + Logback** |
-| **Testes Unitários** | **JUnit 5 + Mockito** |
-| **Testes de Integração** | **Spring Boot Test + Testcontainers** |
-| **Build Tool** | **Maven** ou **Gradle** |
-| **Monitoramento** | **Spring Actuator + Micrometer** |
-| **Cache** | **Spring Cache + Redis** (opcional) |
-| **Filas/Async** | **Spring AMQP / RabbitMQ** (opcional) |
-| **CI/CD** | **GitHub Actions / Jenkins** |
+| Área                     | Tecnologia                                           |
+|--------------------------|------------------------------------------------------|
+| **Linguagem**            | **Java 17+**                                         |
+| **Framework**            | **Spring Boot 3.x**                                  |
+| **ORM**                  | **Spring Data JPA / Hibernate**                      |
+| **Segurança**            | **Spring Security + JWT**                            |
+| **Documentação API**     | **SpringDoc OpenAPI (Swagger)**                      |
+| **Mapper**               | **MapStruct**                                        |
+| **Banco de Dados**       | **PostgreSQL** (produção) / **H2** (desenvolvimento) |
+| **Migração de Banco**    | **Flyway**                                           |
+| **Validação**            | **Hibernate Validator**                              |
+| **Logging**              | **SLF4J + Logback**                                  |
+| **Testes Unitários**     | **JUnit 5 + Mockito**                                |
+| **Testes de Integração** | **Spring Boot Test + Testcontainers**                |
+| **Build Tool**           | **Maven** ou **Gradle**                              |
+| **Monitoramento**        | **Spring Actuator + Micrometer**                     |
+| **Cache**                | **Spring Cache + Redis** (opcional)                  |
+| **Filas/Async**          | **Spring AMQP / RabbitMQ** (opcional)                |
+| **CI/CD**                | **GitHub Actions / Jenkins**                         |
 
 ---
 
@@ -173,6 +177,7 @@ spring:
 ### Executando o Projeto
 
 #### Via Maven:
+
 ```bash
 # Compilar e rodar os testes
 mvn clean install
@@ -182,6 +187,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 #### Via Gradle:
+
 ```bash
 # Compilar e rodar os testes
 ./gradlew clean build
@@ -191,6 +197,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 #### Via Docker (opcional):
+
 ```bash
 # Build da imagem
 docker build -t luna-api .
@@ -221,47 +228,50 @@ A API utiliza **JWT (JSON Web Token)** para autenticação. O fluxo básico é:
 
 ## 📊 Endpoints Principais
 
-| Método | Endpoint | Descrição | Autenticação |
-|--------|----------|-----------|--------------|
-| **POST** | `/api/auth/register` | Cadastro de novo usuário | Público |
-| **POST** | `/api/auth/login` | Login e geração de token | Público |
-| **POST** | `/api/auth/refresh` | Refresh do token | Público |
-| **GET** | `/api/users` | Listar todos os usuários | ADMIN |
-| **GET** | `/api/users/{id}` | Buscar usuário por ID | Usuário/ADMIN |
-| **PUT** | `/api/users/{id}` | Atualizar usuário | Usuário/ADMIN |
-| **DELETE** | `/api/users/{id}` | Deletar usuário | ADMIN |
-| **GET** | `/api/games` | Listar todos os jogos | Público |
-| **GET** | `/api/games/{id}` | Buscar jogo por ID | Público |
-| **POST** | `/api/games` | Criar novo jogo | ADMIN |
-| **PUT** | `/api/games/{id}` | Atualizar jogo | ADMIN |
-| **DELETE** | `/api/games/{id}` | Deletar jogo | ADMIN |
-| **GET** | `/api/posts` | Listar todos os posts | Público |
-| **GET** | `/api/posts/{id}` | Buscar post por ID | Público |
-| **POST** | `/api/posts` | Criar novo post | Usuário |
-| **PUT** | `/api/posts/{id}` | Atualizar post | Autor/ADMIN |
-| **DELETE** | `/api/posts/{id}` | Deletar post | Autor/ADMIN |
-| **GET** | `/api/comments/post/{postId}` | Listar comentários de um post | Público |
-| **POST** | `/api/comments` | Criar novo comentário | Usuário |
-| **DELETE** | `/api/comments/{id}` | Deletar comentário | Autor/ADMIN |
-| **POST** | `/api/game-lists` | Adicionar jogo à lista do usuário | Usuário |
-| **DELETE** | `/api/game-lists` | Remover jogo da lista do usuário | Usuário |
-| **GET** | `/api/game-lists/user/{userId}` | Listar jogos de um usuário | Usuário/ADMIN |
+| Método     | Endpoint                             | Descrição                         | Autenticação  |
+|------------|--------------------------------------|-----------------------------------|---------------|
+| **POST**   | `/api/auth/register`                 | Cadastro de novo usuário          | Público       |
+| **POST**   | `/api/auth/login`                    | Login e geração de token          | Público       |
+| **POST**   | `/api/auth/refresh`                  | Refresh do token                  | Público       |
+| **GET**    | `/api/users`                         | Listar todos os usuários          | ADMIN         |
+| **GET**    | `/api/users/{id}`                    | Buscar usuário por ID             | Usuário/ADMIN |
+| **PUT**    | `/api/users/{id}`                    | Atualizar usuário                 | Usuário/ADMIN |
+| **DELETE** | `/api/users/{id}`                    | Deletar usuário                   | ADMIN         |
+| **GET**    | `/api/games`                         | Listar todos os jogos             | Público       |
+| **GET**    | `/api/games/{id}`                    | Buscar jogo por ID                | Público       |
+| **POST**   | `/api/games`                         | Criar novo jogo                   | ADMIN         |
+| **PUT**    | `/api/games/{id}`                    | Atualizar jogo                    | ADMIN         |
+| **DELETE** | `/api/games/{id}`                    | Deletar jogo                      | ADMIN         |
+| **GET**    | `/api/posts`                         | Listar todos os posts             | Público       |
+| **GET**    | `/api/posts/{id}`                    | Buscar post por ID                | Público       |
+| **POST**   | `/api/posts`                         | Criar novo post                   | Usuário       |
+| **PUT**    | `/api/posts/{id}`                    | Atualizar post                    | Autor/ADMIN   |
+| **DELETE** | `/api/posts/{id}`                    | Deletar post                      | Autor/ADMIN   |
+| **GET**    | `/api/comments/post/{postId}`        | Listar comentários de um post     | Público       |
+| **POST**   | `/api/comments`                      | Criar novo comentário             | Usuário       |
+| **DELETE** | `/api/comments/{id}`                 | Deletar comentário                | Autor/ADMIN   |
+| **POST**   | `/api/gameCache-lists`               | Adicionar jogo à lista do usuário | Usuário       |
+| **DELETE** | `/api/gameCache-lists`               | Remover jogo da lista do usuário  | Usuário       |
+| **GET**    | `/api/gameCache-lists/user/{userId}` | Listar jogos de um usuário        | Usuário/ADMIN |
 
 ---
 
 ## 🧪 Testes
 
 ### Executando testes unitários:
+
 ```bash
 mvn test
 ```
 
 ### Executando testes de integração:
+
 ```bash
 mvn verify
 ```
 
 ### Cobertura de testes (com JaCoCo):
+
 ```bash
 mvn jacoco:report
 ```
