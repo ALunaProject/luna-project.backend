@@ -14,6 +14,9 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
     @EntityGraph(attributePaths = "author")   // evita N+1 ao montar o username
     List<Comment> findByTargetTypeAndTargetIdOrderByCreationDateDesc(CommentTargetType type, String targetId);
 
+    Optional<Comment> findFirstByAuthorIdAndTargetTypeAndTargetIdOrderByCreationDateDesc(
+            UUID authorId, CommentTargetType targetType, String targetId);
+
     @EntityGraph(attributePaths = "author")
     List<Comment> findByAuthorIdOrderByCreationDateDesc(UUID authorId);
 

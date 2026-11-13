@@ -44,7 +44,7 @@ public class CommentService {
         User author = getAuthenticatedUser();
         String content = dto.getContent().trim();
 
-        checkCooldown(author);
+        checkCooldown(author, type, targetId);
         checkDuplicate(author, type, targetId, content);
 
         if (type.equals(CommentTargetType.GAME)) {
@@ -134,8 +134,10 @@ public class CommentService {
 
     private static final Duration COMMENT_COOLDOWN = Duration.ofMinutes(2);
 
-    private void checkCooldown(User author) {
-        commentRepository.findFirstByAuthorIdOrderByCreationDateDesc(author.getId())
+    private void checkCooldown(User author, CommentTargetType type, String targetId) {
+        commentRepository
+                .findFirstByAuthorIdAndTargetTypeAndTargetIdOrderByCreationDateDesc(
+                        author.getId(), type, targetId)
                 .ifPresent(last -> {
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime availableAt = last.getCreationDate().plus(COMMENT_COOLDOWN);
