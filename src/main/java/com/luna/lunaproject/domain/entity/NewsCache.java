@@ -17,5 +17,8 @@ public class NewsCache {
 
     @Id
     @Column(name = "id")
-    private Integer id;
+    private String id;
+
+    public NewsCache(String id, String s) {
+    }
 }
