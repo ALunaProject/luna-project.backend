@@ -36,29 +36,23 @@ public class GameListServices {
 
     @Transactional
     public GameListResponse createCustom(GameListCreate req, UUID userId) {
+        String name = req.getName().trim();
 
-        if (listRepo.existsByUserIdAndNameIgnoreCase(userId, req.getName().trim())) {
+        if (listRepo.existsByUserIdAndNameIgnoreCase(userId, name)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You already have a list with this name!");
         }
 
-        User user = userRepo.getReferenceById(userId);
         GameList list = new GameList();
         list.setListType(ListType.CUSTOM);
-        list.setName(req.getName().trim());
-        list.setUser(user);
+        list.setName(name);
+        list.setUser(userRepo.getReferenceById(userId));
 
-        GameList saved = listRepo.save(list);
-        return new GameListResponse(saved);
+        return new GameListResponse(listRepo.save(list));
     }
 
     @Transactional
     public GameListResponse addGameToList(UUID listId, GameCacheCreate req, UUID userId) throws AccessDeniedException {
-        GameList list = listRepo.findById(listId)
-                .orElseThrow(() -> new ResourceNotFoundException("List not found: " + listId));
-
-        if (!list.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("You can't modify this list");
-        }
+        GameList list = findOwnedManageableList(listId, userId);
 
         GameCache game = gameCacheService.getOrCreateGameCacheEntity(req);
         list.getGames().add(game);
@@ -68,42 +62,31 @@ public class GameListServices {
 
     @Transactional
     public String deleteList(UUID listId, UUID userId) throws AccessDeniedException {
-        GameList list = listRepo.findById(listId)
-                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        GameList list = findOwnedManageableList(listId, userId);
 
-        if (!list.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("You can't modify this list");
-        }
         if (list.isDefault()) {
             throw new BusinessRuleException("Default lists can't be deleted");
         }
+
         listRepo.delete(list);
         return "List deleted successfully!";
     }
 
     @Transactional
     public GameListResponse renameList(UUID listId, UUID userId, GameListCreate req) throws AccessDeniedException {
-        GameList list = listRepo.findById(listId)
-                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        GameList list = findOwnedManageableList(listId, userId);
 
-        if (!list.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("You can't modify this list");
-        }
         if (list.isDefault()) {
             throw new BusinessRuleException("Default lists can't be modified");
         }
-        list.setName(req.getName());
+
+        list.setName(req.getName().trim());
         return new GameListResponse(listRepo.save(list));
     }
 
     @Transactional
     public GameListResponse deleteGameOnList(UUID listId, UUID userId, Integer appId) throws AccessDeniedException {
-        GameList list = listRepo.findById(listId)
-                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
-
-        if (!list.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("You can't modify this list");
-        }
+        GameList list = findOwnedManageableList(listId, userId);
 
         GameCache game = gameRepo.findById(appId)
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found: " + appId));
@@ -115,11 +98,11 @@ public class GameListServices {
 
     @Transactional
     public List<GameListResponse> getAllUserLists(UUID userId) {
-        // para listar em ordem especifica
         Collator collator = Collator.getInstance(Locale.forLanguageTag("pt-BR"));
         collator.setStrength(Collator.SECONDARY);
 
         return listRepo.findAllByUserId(userId).stream()
+                .filter(l -> l.getListType() != ListType.FAVORITES) // favoritos têm service próprio
                 .sorted(Comparator
                         .comparingInt((GameList l) -> defaultListOrder(l.getListType()))
                         .thenComparing(GameList::getName, collator))
@@ -127,14 +110,27 @@ public class GameListServices {
                 .toList();
     }
 
+    // ---------- helpers ----------
+
+    private GameList findOwnedManageableList(UUID listId, UUID userId) throws AccessDeniedException {
+        GameList list = listRepo.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("List not found: " + listId));
+
+        if (!list.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("You can't modify this list");
+        }
+        if (list.getListType() == ListType.FAVORITES) {
+            throw new BusinessRuleException("Favorites list can only be managed through the favorites endpoint");
+        }
+        return list;
+    }
+
     private int defaultListOrder(ListType type) {
         return switch (type) {
             case WISHLIST -> 0;
             case PLAYING  -> 1;
             case PLAYED   -> 2;
-            default       -> 3; // ordem alfabética
+            default       -> 3; // CUSTOM: ordem alfabética
         };
     }
-
-
 }
