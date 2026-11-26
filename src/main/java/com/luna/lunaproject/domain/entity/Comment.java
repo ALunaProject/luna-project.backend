@@ -28,7 +28,7 @@ public class Comment {
     @Column(name = "target_type", nullable = false, length = 20)
     private CommentTargetType targetType;
 
-    @Column(name = "target_id", nullable = false, length = 100)
+    @Column(name = "target_id", nullable = false, length = 512)
     private String targetId;
 
     @Column(name = "creation_date", nullable = false, updatable = false)

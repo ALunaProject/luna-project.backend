@@ -16,9 +16,10 @@ import lombok.Setter;
 public class NewsCache {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", length = 512)
     private String id;
 
-    public NewsCache(String id, String s) {
+    public NewsCache(String id) {
+        this.id = id;
     }
 }
