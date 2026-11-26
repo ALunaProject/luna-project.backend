@@ -1,6 +1,7 @@
 package com.luna.lunaproject.domain.repository;
 
 import com.luna.lunaproject.domain.entity.GameList;
+import com.luna.lunaproject.domain.enums.ListType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -9,6 +10,6 @@ import java.util.UUID;
 
 public interface GameListRepository extends JpaRepository<GameList, UUID> {
     List<GameList> findAllByUserId(UUID userId);
-    Optional<GameList> findByIdAndUserId(UUID id, UUID userId);
     boolean existsByUserIdAndNameIgnoreCase(UUID userId, String name);
+    Optional<GameList> findByUserIdAndListType(UUID userId, ListType listType);
 }
