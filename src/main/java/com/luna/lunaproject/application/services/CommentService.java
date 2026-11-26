@@ -6,10 +6,7 @@ import com.luna.lunaproject.application.dto.comments.CommentTargetResolver;
 import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.exceptions.ForbiddenOperationException;
 import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
-import com.luna.lunaproject.domain.entity.Comment;
-import com.luna.lunaproject.domain.entity.GameCache;
-import com.luna.lunaproject.domain.entity.Post;
-import com.luna.lunaproject.domain.entity.User;
+import com.luna.lunaproject.domain.entity.*;
 import com.luna.lunaproject.domain.enums.CommentTargetType;
 import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.CommentRepository;
@@ -36,6 +33,7 @@ public class CommentService {
     private final CommentTargetResolver targetResolver;
     private final UserRepository userRepository;
     private final GameCacheService gameCacheService;
+    private final NewsCacheService newsCacheService;
 
 
     @Transactional
@@ -51,6 +49,10 @@ public class CommentService {
             GameCacheCreate req = new GameCacheCreate();
             req.setAppid(Integer.valueOf(rawTargetId));
             GameCache game = gameCacheService.getOrCreateGameCacheEntity(req);
+        }
+
+        if (type == CommentTargetType.NEWS) {
+            newsCacheService.getOrCreateNewsCache(targetId);
         }
 
         Comment comment = Comment.builder()

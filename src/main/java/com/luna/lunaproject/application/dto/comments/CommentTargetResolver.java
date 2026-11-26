@@ -9,17 +9,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
 public class CommentTargetResolver {
+
+    private static final int MAX_TARGET_ID_LENGTH = 512;
+    private static final Pattern BASE64_URL = Pattern.compile("^[A-Za-z0-9_-]+={0,2}$");
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
     public String resolve(CommentTargetType type, String rawId) {
         String id = rawId == null ? "" : rawId.trim();
-        if (id.isEmpty() || id.length() > 100) {
+        if (id.isEmpty() || id.length() > MAX_TARGET_ID_LENGTH) {
             throw new BusinessRuleException("Id do alvo inválido");
         }
 
@@ -47,7 +51,12 @@ public class CommentTargetResolver {
                     throw new BusinessRuleException("appid inválido");
                 }
             }
-            case NEWS -> id;
+            case NEWS -> {
+                if (!BASE64_URL.matcher(id).matches()) {
+                    throw new BusinessRuleException("Id de notícia inválido");
+                }
+                yield id;
+            }
         };
     }
 
