@@ -3,7 +3,6 @@ package com.luna.lunaproject.interfaces.controller;
 import com.luna.lunaproject.application.dto.gameCache.GameCacheCreate;
 import com.luna.lunaproject.application.dto.gameList.GameListResponse;
 import com.luna.lunaproject.application.services.FavoriteGamesServices;
-import com.luna.lunaproject.domain.entity.GameList;
 import com.luna.lunaproject.domain.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/favorites")
@@ -20,14 +19,14 @@ import java.util.List;
 public class FavoriteGamesController {
     private final FavoriteGamesServices favServices;
 
-    @GetMapping()
-    public ResponseEntity<Object> getAllFavorites(@AuthenticationPrincipal User currentUser) {
-        GameListResponse res = favServices.getAllFavorites(currentUser.getId());
+    @GetMapping("/{userId}")
+    public ResponseEntity<Object> getAllFavorites(@PathVariable UUID userId) {
+        GameListResponse res = favServices.getAllFavorites(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<Object> addFavotiteGame(
+    public ResponseEntity<Object> addFavoriteGame(
             @RequestBody @Valid GameCacheCreate req,
             @AuthenticationPrincipal User currentUser
     ) {
@@ -35,12 +34,12 @@ public class FavoriteGamesController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{appId}")
     public ResponseEntity<Object> deleteFavoriteGame(
-            @RequestBody @Valid GameCacheCreate req,
+            @PathVariable Integer appId,
             @AuthenticationPrincipal User currentUser
     ) {
-        GameListResponse res = favServices.deleteFavGame(currentUser.getId(), req.getAppid());
+        GameListResponse res = favServices.deleteFavGame(currentUser.getId(), appId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }

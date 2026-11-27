@@ -26,10 +26,9 @@ public class FavoriteGamesServices {
 
     @Transactional(readOnly = true)
     public GameListResponse getAllFavorites(UUID userId) {
-        GameList favorites = listRepo.findByUserIdAndListType(userId, ListType.FAVORITES)
-                .orElseThrow(() -> new ResourceNotFoundException("Favorites list not found"));
-
-        return new GameListResponse(favorites);
+        return listRepo.findByUserIdAndListType(userId, ListType.FAVORITES)
+                .map(GameListResponse::new)
+                .orElseGet(() -> GameListResponse.empty(userId));
     }
 
     @Transactional
