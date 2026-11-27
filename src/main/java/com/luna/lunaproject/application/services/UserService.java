@@ -37,6 +37,10 @@ public class UserService {
         if (ReservedUsernames.isReserved(userCreateDto.getUsername())) {
             throw new ReservedUsernameException("Este username é reservado pelo sistema");
         }
+        User existing = userRepository.findByUsername(userCreateDto.getUsername());
+        if (existing != null && !existing.getId().equals(existing)){
+            throw new UsernameAlreadyExistsException("Este username já está sendo utilizado por outro usuario");
+        }
 
         String normalizedEmail = userCreateDto.getEmail().trim().toLowerCase(Locale.ROOT);
         if (userRepository.findByEmailIgnoreCase(normalizedEmail) != null) {
