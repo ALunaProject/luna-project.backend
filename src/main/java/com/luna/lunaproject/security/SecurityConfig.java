@@ -37,38 +37,50 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/games/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/games/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/news/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/news/**").authenticated()
+
                         .requestMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/post/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/post/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/post/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/post/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/post/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/comments/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/comments/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/comments/**").authenticated()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/lists").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/lists/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/lists/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/lists/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/lists/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/ratings/games/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/ratings/games").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/ratings/games").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/favorites").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/reports/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/reports/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/reports/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/lists/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/lists", "/api/lists/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/lists/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/lists/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/ratings/games/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/ratings/games").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/ratings/games").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/favorites").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
 

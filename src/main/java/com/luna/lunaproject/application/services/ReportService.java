@@ -63,8 +63,8 @@ public class ReportService {
     @Transactional
     public String delete(UUID reportId) {
         validateIsAdmin();
-        Report  report = reportRepository.findById(reportId).orElse(null);
-        assert report != null;
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("Não encontrado com o id: " + reportId));
         reportRepository.delete(report);
         return "Report deleted successfully";
     }
