@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,5 +30,13 @@ public class GameListResponse {
         this.games = list.getGames().stream()
                 .map(GameCacheResponse::from)
                 .collect(Collectors.toSet());
+    }
+
+    public static GameListResponse empty(UUID userId) {
+        GameListResponse res = new GameListResponse();
+        res.setName("Favorites");
+        res.setType(ListType.FAVORITES);
+        res.setGames(new LinkedHashSet<>());
+        return res;
     }
 }

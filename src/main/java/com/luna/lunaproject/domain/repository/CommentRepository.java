@@ -4,11 +4,13 @@ import com.luna.lunaproject.domain.entity.Comment;
 import com.luna.lunaproject.domain.enums.CommentTargetType;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
 
     @EntityGraph(attributePaths = "author")   // evita N+1 ao montar o username
