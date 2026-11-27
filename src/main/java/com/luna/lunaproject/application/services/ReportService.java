@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ReportService {
@@ -37,6 +39,14 @@ public class ReportService {
                 .build();
 
         return toResponseDto(reportRepository.save(report));
+    }
+
+    @Transactional
+    public String delete(UUID reportId) {
+        Report  report = reportRepository.findById(reportId).orElse(null);
+        assert report != null;
+        reportRepository.delete(report);
+        return "Report deleted successfully";
     }
 
     private User getAuthenticatedUser() {

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
@@ -23,5 +25,10 @@ public class ReportController {
             @PathVariable String targetId,
             @Valid @RequestBody ReportRequestDTO body) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reportService.create(type, targetId, body));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        return ResponseEntity.ok(reportService.delete(id));
     }
 }
