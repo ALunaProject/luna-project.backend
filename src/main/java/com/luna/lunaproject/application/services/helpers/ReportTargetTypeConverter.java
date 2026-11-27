@@ -1,4 +1,4 @@
-package com.luna.lunaproject.application.services;
+package com.luna.lunaproject.application.services.helpers;
 
 import com.luna.lunaproject.domain.enums.ReportTargetType;
 import org.springframework.core.convert.converter.Converter;
