@@ -63,9 +63,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/ratings/games/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/ratings/games").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/ratings/games").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/favorites").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/favorites/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/favorites").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/favorites").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/favorites/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
