@@ -4,15 +4,19 @@ import com.luna.lunaproject.application.dto.reports.ReportRequestDTO;
 import com.luna.lunaproject.application.dto.reports.ReportResponseDTO;
 import com.luna.lunaproject.application.dto.reports.ReportTargetResolver;
 import com.luna.lunaproject.application.exceptions.BusinessRuleException;
+import com.luna.lunaproject.application.exceptions.ForbiddenOperationException;
+import com.luna.lunaproject.application.exceptions.ResourceNotFoundException;
 import com.luna.lunaproject.domain.entity.Report;
 import com.luna.lunaproject.domain.entity.User;
 import com.luna.lunaproject.domain.enums.ReportTargetType;
+import com.luna.lunaproject.domain.enums.UserRole;
 import com.luna.lunaproject.domain.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -41,12 +45,34 @@ public class ReportService {
         return toResponseDto(reportRepository.save(report));
     }
 
+    @Transactional(readOnly = true)
+    public List<ReportResponseDTO> getAll() {
+        validateIsAdmin();
+        return reportRepository.findAllByOrderByCreationDateDesc()
+                .stream().map(this::toResponseDto).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ReportResponseDTO getById(UUID reportId) {
+        validateIsAdmin();
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("Denúncia não encontrada com o id: " + reportId));
+        return toResponseDto(report);
+    }
+
     @Transactional
     public String delete(UUID reportId) {
+        validateIsAdmin();
         Report  report = reportRepository.findById(reportId).orElse(null);
         assert report != null;
         reportRepository.delete(report);
         return "Report deleted successfully";
+    }
+
+    private void validateIsAdmin() {
+        if (getAuthenticatedUser().getRole() != UserRole.ADMIN) {
+            throw new ForbiddenOperationException("Você não tem permissão para isso");
+        }
     }
 
     private User getAuthenticatedUser() {

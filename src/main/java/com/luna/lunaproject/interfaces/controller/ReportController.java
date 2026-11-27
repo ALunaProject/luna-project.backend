@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +26,16 @@ public class ReportController {
             @PathVariable String targetId,
             @Valid @RequestBody ReportRequestDTO body) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reportService.create(type, targetId, body));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReportResponseDTO>> getAll() {
+        return ResponseEntity.ok(reportService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReportResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(reportService.getById(id));
     }
 
     @DeleteMapping("/{id}")
